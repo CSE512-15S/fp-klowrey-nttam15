@@ -2,18 +2,14 @@
 var tsnejs = require('./scripts/tsne');
 var convnetjs = require('./scripts/convnet-min');
 
-var opt = {epsilon: 10, perplexity: 30, dim: 3}; // epsilon is learning rate (10 = default)
-var tsne = new tsnejs.tSNE(opt); // create a tSNE instance
-var convnet = new tsnejs.tSNE(opt); // create a tSNE instance
-
-
 
 // make layers
 var layer_defs = [];
 // input layer of size 1x1x2 (all volumes are 3D)
-layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:2});
+layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:3});
 // some fully connected layers
-layer_defs.push({type:'fc', num_neurons:3, activation:'sigmoid'});
+layer_defs.push({type:'fc', num_neurons:4, activation:'sigmoid'});
+
 //layer_defs.push({type:'fc', num_neurons:20, activation:'relu'});
 // a softmax classifier predicting probabilities for two classes: 0,1
 layer_defs.push({type:'softmax', num_classes:2});
@@ -22,7 +18,7 @@ layer_defs.push({type:'softmax', num_classes:2});
 // make network from layers above
 var net = new convnetjs.Net();
 net.makeLayers(layer_defs);
-save_net_to_json(net, 'untrained_network.json');
+//save_net_to_json(net, 'untrained_network.json');
 
 //var trainer = new convnetjs.SGDTrainer(net, 
 //              {learning_rate:0.2, momentum:0.0, batch_size:10, l2_decay:0.001});
@@ -40,17 +36,17 @@ var start = new Date().getTime();
 
 // xor
 data = [];
-data.push([0.0, 0.0]);
-data.push([0.0, 1.0]);
-data.push([1.0, 0.0]);
-data.push([1.0, 1.0]);
+labels = [];
+data.push([0.0, 0.0, 0.0]); labels.push(0);
+data.push([0.0, 1.0, 0.0]); labels.push(1);
+data.push([1.0, 0.0, 0.0]); labels.push(1);
+data.push([1.0, 1.0, 0.0]); labels.push(1);
+data.push([0.0, 0.0, 1.0]); labels.push(1);
+data.push([0.0, 1.0, 1.0]); labels.push(1);
+data.push([1.0, 0.0, 1.0]); labels.push(1);
+data.push([1.0, 1.0, 1.0]); labels.push(0);
 // classfication needs class number,
 
-labels = [];
-labels.push(0);
-labels.push(1);
-labels.push(1);
-labels.push(0);
 // regression needs list of values
 //labels = [];
 //labels.push([0]);
@@ -66,7 +62,7 @@ function train_network(d, l) {
    // 1 x 1, with a depth of 2 ( vector length 2 )
    //x.w = d[ix];
    var avloss = 0.0;
-   for(var iters=0;iters<2000;iters++) {
+   for(var iters=0;iters<4000;iters++) {
       for(var ix=0;ix<N;ix++) {
          x.w = d[ix];
          var stats = trainer.train(x, l[ix]);
@@ -89,15 +85,50 @@ for(var ix=0;ix<N;ix++) {
    console.log('in: ' + data[ix]+' goal: '+labels[ix]+' out: '+predicted_values.w[0]+' '+predicted_values.w[1]);
 }
 
+//save_net_to_json(net, 'trained_network.json');
 
-function layer_data(network) {
-   var num_layers = network.layers.length;
-   for (var nl=0; nl<num_layers; nl++) {
-      network.layers[nl].out_act.w[0];
+var test_data = [];
+test_data.push(data[0]);
+test_data.push(data[1]);
+test_data.push(data[2]);
+test_data.push(data[3]);
+test_data.push(data[4]);
+test_data.push(data[5]);
+test_data.push(data[6]);
+test_data.push(data[7]);
+var tsne_data = get_coactivation_data(net, test_data);
+
+function layer_data(network, act, layer) {
+   var num_weights = network.layers[layer].out_act.w.length;
+   for (var nw=0; nw<num_weights; nw++) {
+      weight = network.layers[layer].out_act.w[nw];
+      //console.log('\t'+nw+': '+weight);
+      act[nw].push(weight);
    }
 }
 
-save_net_to_json(net, 'trained_network.json');
+// get coactivations with test dataset test_d
+function get_coactivation_data(network, test_d) {
+   var N = test_d.length;
+   var layer_num = 2;
+   var num_weights = network.layers[layer_num].out_act.w.length;
+   //var activations = new Array(num_weights);
+   var activations = [];
+   for (var nw=0; nw<num_weights; nw++) {
+      activations[nw] = [];
+   }
+   for (var ix=0;ix<N;ix++) {
+      x.w = test_d[ix];
+      //console.log(x.w+': ');
+      var predicted_values = network.forward(x);
+      layer_data(network, activations, layer_num);
+      //console.log('in: ' + data[ix]+' goal: '+labels[ix]+' out: '+predicted_values.w[0]+' '+predicted_values.w[1]);
+   }
+   console.log('Getting activations for layer '+layer_num+'\'s neurons');
+   console.log('\t\t'+num_weights+' weights for '+N+' inputs');
+   //console.log(activations);
+   return activations;
+}
 
 
 function save_net_to_json(network, filename) {
@@ -114,18 +145,6 @@ function save_net_to_json(network, filename) {
    });
 }
 
-// get coactivations with test dataset test_d
-function get_coactivation_data(network, test_d) {
-   var N = test_d.length;
-   for(var ix=0;ix<N;ix++) {
-      x.w = test_d[ix];
-      var predicted_values = network.forward(x);
-      //console.log('in: ' + data[ix]+' goal: '+labels[ix]+' out: '+predicted_values.w[0]+' '+predicted_values.w[1]);
-   }
-}
-
-
-
 // FORMAT for tsne:
 // vectors of values
 //
@@ -137,22 +156,22 @@ function get_coactivation_data(network, test_d) {
 
 // TSNE stuff
 // initialize data. Here we have 3 points and some example pairwise dissimilarities
-/*
-   var dists = [
+var opt = {epsilon: 10, perplexity: 30, dim: 2}; // epsilon is learning rate (10 = default)
+var tsne = new tsnejs.tSNE(opt); // create a tSNE instance
+
+var dists = [
    [1.0, 0.1, 0.2, 0.6, 0.9, 1.02, 10.2, 100],
    [0.1, 1.0, 0.3, 0.6, 0.9, 1.02, 10.2, 100],
-   [0.2, 0.1, 1.0, 0.6, 0.9, 1.02, 10.2, 100]];
-   tsne.initDataDist(dists);
+   [0.2, 0.1, 1.0, 0.6, 0.9, 1.02, 10.2, 100]
+];
+//tsne.initDataDist(dists);
+tsne.initDataDist(tsne_data);
 
-   for(var k = 0; k < 500; k++) {
+for(var k = 0; k < 500; k++) {
    tsne.step(); // every time you call this, solution gets better
-   }
-
-   var Y = tsne.getSolution(); // Y is an array of 2-D points that you can plot
-
-   console.log("Dists:");
-   console.log(dists);
-   console.log("Output:");
-   console.log(Y)
-   */
+}
+console.log("TSNE input:");
+console.log(tsne_data);
+console.log("TSNE Output:");
+console.log(tsne.getSolution());
 
