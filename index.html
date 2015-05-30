@@ -1,144 +1,339 @@
 
 <!DOCTYPE html>
 <html class="ocks-org do-not-copy">
-<meta charset="utf-8">
-<title>Sankey Diagram</title>
-<style>
+   <meta charset="utf-8">
+   <title>Lets Visualize some Neural Networks</title>
+   <style>
 
-@import url(style.css?aea6f0a);
+      @import url(style.css?aea6f0a);
 
-#chart {
-  height: 500px;
-}
+      #chart {
+         height: 500px;
+         background-color: #f0f0f0;
+      }
 
-.node rect {
-  cursor: move;
-  fill-opacity: .9;
-  shape-rendering: crispEdges;
-}
+      .node rect {
+         cursor: move;
+         fill-opacity: .9;
+         shape-rendering: crispEdges;
+      }
 
-.node text {
-  pointer-events: none;
-  text-shadow: 0 1px 0 #fff;
-}
+      .node circle {
+         cursor: move;
+         fill-opacity: .9;
+         //shape-rendering: crispEdges;
+      }
 
-.link {
-  fill: none;
-  stroke: #000;
-  stroke-opacity: .2;
-}
+      .node text {
+         pointer-events: none;
+         text-shadow: 0 1px 0 #fff;
+      }
 
-.link:hover {
-  stroke-opacity: .5;
-}
+      .link {
+         fill: none;
+         stroke: #000;
+         //stroke-opacity: .2;
+      }
 
-</style>
-<body>
+      .link:hover {
+         stroke-opacity: .5;
+      }
 
-<header>
-  <aside>May 22, 2012</aside>
-  <a href="../" rel="author">Mike Bostock</a>
-</header>
+   </style>
+   <body>
 
-<h1>Sankey Diagrams</h1>
+      <header>
+         <aside>May 22, 2012</aside>
+         <a href="../" rel="author">Mike Bostock</a>
+      </header>
 
-<p id="chart">
+      <h1>Sankey Diagrams</h1>
 
-<aside>Drag to rearrange nodes.</aside>
-
-
-<aside>Sankey diagrams are closely related to <a href="http://en.wikipedia.org/wiki/Alluvial_diagram">alluvial diagrams</a>, which show how network structure changes over time.</aside>
-
-
-<p>The fully automatic layout is convenient for rapid visualization—positioning nodes manually is tedious! However, the algorithm is not perfect; links are drawn with partial transparency to highlight crossings. To improve readability and further disambiguate links, this example also lets you reposition nodes interactively. The algorithm could be improved in the future, say to minimize link crossing or to support loopback in cyclical networks.
-
-<p>Many thanks to Tom Counsell, whose <a href="http://tamc.github.com/Sankey/">Sankey library</a> provided inspiration for this example.
-
-<footer>
-  <aside>May 22, 2012</aside>
-  <a href="../" rel="author">Mike Bostock</a>
-</footer>
-
-<script src="scripts/d3.v3.min.js"></script>
-<script src="scripts/sankey.js"></script>
-<script>
-
-var margin = {top: 1, right: 1, bottom: 6, left: 1},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
-var formatNumber = d3.format(",.3f"),
-    format = function(d) { return formatNumber(d); },
-    color = d3.scale.category20();
-
-var svg = d3.select("#chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var sankey = d3.sankey()
-    .nodeWidth(15)
-    .nodePadding(10)
-    .size([width, height]);
-
-var path = sankey.link();
-
-//d3.json("data/energy.json", function(energy) {
-d3.json("data/out_test.json", function(energy) {
-
-  sankey
-      .nodes(energy.nodes)
-      .links(energy.links)
-      .layout(32);
-
-  var link = svg.append("g").selectAll(".link")
-      .data(energy.links)
-    .enter().append("path")
-      .attr("class", "link")
-      .attr("d", path)
-      .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-      .sort(function(a, b) { return b.dy - a.dy; });
-
-  link.append("title")
-      .text(function(d) { return d.source.name + " → " + d.target.name + "\n" + format(d.value); });
-
-  var node = svg.append("g").selectAll(".node")
-      .data(energy.nodes)
-    .enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-    .call(d3.behavior.drag()
-      .origin(function(d) { return d; })
-      .on("dragstart", function() { this.parentNode.appendChild(this); })
-      .on("drag", dragmove));
-
-  node.append("rect")
-      .attr("height", function(d) { return d.dy; })
-      .attr("width", sankey.nodeWidth())
-      .style("fill", function(d) { return d.color = color(d.name.replace(/ .*/, "")); })
-      .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
-    .append("title")
-      .text(function(d) { return d.name + "\n" + format(d.value); });
-
-  node.append("text")
-      .attr("x", -6)
-      .attr("y", function(d) { return d.dy / 2; })
-      .attr("dy", ".35em")
-      .attr("text-anchor", "end")
-      .attr("transform", null)
-      .text(function(d) { return d.name; })
-    .filter(function(d) { return d.x < width / 2; })
-      .attr("x", 6 + sankey.nodeWidth())
-      .attr("text-anchor", "start");
-
-  function dragmove(d) {
-    d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
-    sankey.relayout();
-    link.attr("d", path);
-  }
-});
-
-</script>
+      <p id="chart"></p>
 
 
+      <aside>Drag to rearrange nodes.</aside>
+      <aside>Sankey diagrams are closely related to <a href="http://en.wikipedia.org/wiki/Alluvial_diagram">alluvial diagrams</a>, which show how network structure changes over time.</aside>
+      <p>The fully automatic layout is convenient for rapid visualization—positioning nodes manually is tedious! However, the algorithm is not perfect; links are drawn with partial transparency to highlight crossings. To improve readability and further disambiguate links, this example also lets you reposition nodes interactively. The algorithm could be improved in the future, say to minimize link crossing or to support loopback in cyclical networks.</p>
+      <p>Many thanks to Tom Counsell, whose <a href="http://tamc.github.com/Sankey/">Sankey library</a> provided inspiration for this example.</p>
+
+      <!--
+      <p id="small_mult"></p>
+      -->
+
+      <footer>
+         <aside>May 22, 2012</aside>
+         <a href="../" rel="author">Mike Bostock</a>
+      </footer>
+
+      <script src="scripts/d3.v3.min.js"></script>
+      <script src="scripts/sankey.js"></script>
+      <script src="scripts/queue.v1.min.js"></script>
+      <script>
+
+         var margin = {top: 1, right: 1, bottom: 6, left: 1},
+         width = 960 - margin.left - margin.right,
+         height = 500 - margin.top - margin.bottom,
+         size = 150,
+         padding = 19.5;
+
+         var formatNumber = d3.format(",.3f");
+         var format = function(d) { return formatNumber(d); };
+         var color = d3.scale.category20();
+
+         var svg = d3.select("#chart").append("svg")
+         .attr("width", width + margin.left + margin.right)
+         .attr("height", height + margin.top + margin.bottom)
+         .append("g")
+         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+         console.log([width, height]);
+
+         var sankey = d3.sankey()
+         .nodeWidth(15)
+         .nodePadding(10)
+         .size([width, height]);
+
+         //var path = sankey.link();
+         var path = d3.svg.diagonal()
+         .source(function(d) {
+            return {
+               "x":d.source.y + d.source.dy,
+               "y":d.source.x + sankey.nodeWidth()/2};
+         })            
+         .target(function(d) {
+            return {
+               "x":d.target.y + d.target.dy,
+               "y":d.target.x + sankey.nodeWidth()/2};
+         })
+         .projection(function(d) { return [d.y, d.x]; });
+
+         queue()
+         .defer(d3.json, "data/tsne_sankey.json")
+         .defer(d3.json, "data/tsne_points.json")
+         //.defer(d3.json, "data/energy.json")
+         .await(ready);
+
+         var mapRange = function(from, to, s) {
+            return to[0] + (s - from[0]) * (to[1] - to[0]) / (from[1] - from[0]);
+         };
+
+         function ready(error, data_s, net) {
+
+            //console.log(data_s.nodes.length)
+            //console.log(data_s.links.length)
+            //console.log(data_s.meta.length)
+
+            sankey
+            .nodes(data_s.nodes)
+            .links(data_s.links)
+            .layout(32);
+
+            // combine additional data into node strutures
+            console.log("height:" + height);
+            for (var n=0; n<data_s.nodes.length; n++) {
+               data_s.nodes[n].size = data_s.meta[n].size;
+               if (data_s.meta[n].pos.length == 1) {
+                  data_s.nodes[n].pos = [];
+                  data_s.nodes[n].pos.push(mapRange([-1, 1], [0, height/2], data_s.meta[n].pos[0]));
+
+                  console.log("before: "+data_s.meta[n].pos[0]+"mapped: " +data_s.nodes[n].pos[0]);
+               } else {
+                  data_s.nodes[n].pos = data_s.meta[n].pos;
+               }
+            }
+            console.log(data_s.nodes);
+
+            //console.log(sankey)
+
+            var link = svg.append("g").selectAll(".link")
+            .data(data_s.links)
+            .enter().append("path")
+            .attr("class", "link")
+            .attr("d", path)
+            .style("stroke-width", function(d) { return Math.max(1, d.dy)/2; })
+            .sort(function(a, b) { return b.dy - a.dy; })
+            .style("opacity", function(d) { return d.value/3; });
+
+            link.append("title")
+            .text(function(d) {
+               return d.source.name+" → "+d.target.name+"\n"
+               +format(d.v1)+" → "+format(d.v2)+"\n"
+               +format(d.value)+"\n"+format(d.dy);
+            });
+
+            var node = svg.append("g").selectAll(".node")
+            .data(data_s.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .attr("transform", function(d) {
+               return "translate(" + d.x + "," + d.y + ")";
+            })
+            .call(d3.behavior.drag()
+            .origin(function(d) { return d; })
+            .on("dragstart", function() { this.parentNode.appendChild(this); })
+            .on("drag", dragmove));
+
+            // rectangular sankey nodes
+            /*
+            node.append("rect")
+               .attr("height", function(d) { return d.dy; })
+               .attr("width", sankey.nodeWidth())
+               .style("fill", function(d) {  })
+               .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
+               .append("title")
+               .text(function(d) { return d.name + "\n" + format(d.value); });
+               */
+
+            //////////////////////////////////////////////
+            // circular sankey nodes
+            node.append("circle")
+               .attr("cx", sankey.nodeWidth()/2)
+               .attr("cy", function (d) { 
+                  //console.log(d.pos[0]+" : "+d.dy);
+                  return d.dy;
+               })
+               .attr("r", function (d) { 
+                  //console.log("size: "+d.size+" dy: "+d.dy);
+                  return Math.sqrt(d.size);
+                  //return Math.sqrt(d.dy);
+                  })
+               .style("opacity", 0.6)
+               .append("title")
+               .text(function(d) { return d.name + "\n" + format(d.value)+ "\n" + format(d.dy); });
+
+            node.append("text")
+               .attr("x", -6)
+               .attr("y", function(d) { return d.dy; })
+               .attr("dy", ".35em")
+               .attr("text-anchor", "end")
+               .attr("transform", null)
+               .text(function(d) { return d.name; })
+               .filter(function(d) { return d.x < width / 2; })
+               .attr("x", 6 + sankey.nodeWidth())
+               .attr("text-anchor", "start");
+
+            function dragmove(d) {
+               //d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
+               d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.pos[0], d3.event.y)) ) + ")");
+               sankey.relayout();
+               link.attr("d", path);
+            }
+
+            // small multiples below
+            /*
+            var x = d3.scale.linear()
+               .range([padding / 2, size - padding / 2]);
+
+            var y = d3.scale.linear()
+               .range([size - padding / 2, padding / 2]);
+
+            var xAxis = d3.svg.axis()
+               .scale(x)
+               .orient("bottom")
+               .ticks(5);
+
+            var yAxis = d3.svg.axis()
+               .scale(y)
+               .orient("left")
+               .ticks(5);
+               */
+
+            // Nest data by symbol.
+            console.log("network: "+net.network.length);
+
+            var neurons = d3.nest()
+               .key(function(d) { return d.layer; })
+               .key(function(d) { return d.neuron; })
+               .entries(net.network);
+
+            // Compute the maximum price per symbol, needed for the y-domain.
+            //console.log("neurons: "+neurons.length);
+            //n = neurons.length;
+
+            //neurons.forEach(function(s) {
+            //   s.points = return d.points; });
+            //   console.log("Names: "+s);
+            //});
+
+            // Compute the minimum and maximum date across neurons.
+            // We assume values are sorted by date.
+            //x.domain([
+            //d3.min(neurons, function(s) { return s.values[0].date; }),
+            //d3.max(neurons, function(s) { return s.values[s.values.length - 1].date; })
+            //]);
+
+            // Add an SVG element for each symbol, with the desired dimensions and margin.
+            /*
+            var svg2 = d3.select("#small_mult").selectAll("svg")
+            .data(neurons)
+            .enter().append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            svg2.selectAll(".x.axis")
+            .data(neurons)
+            .enter().append("g")
+            .attr("class", "x axis")
+            .attr("transform", function(d, i) {
+               return "translate(" + (n - i - 1) * size + ",0)"; })
+            .each(function(d) {
+               x.domain(neurons.points[d]);
+               d3.select(this).call(xAxis);
+            });
+
+            svg2.selectAll(".y.axis")
+            .data(neurons)
+            .enter().append("g")
+            .attr("class", "y axis")
+            .attr("transform", function(d, i) { return "translate(0," + i * size + ")"; })
+            .each(function(d) {
+               y.domain(domainByTrait[d]);
+               d3.select(this).call(yAxis);
+            });
+
+            var cell = svg2.selectAll(".cell")
+            .data(cross(neurons, neurons))
+            .enter().append("g")
+            .attr("class", "cell")
+            .attr("transform", function(d) { return "translate(" + (n - d.i - 1) * size + "," + d.j * size + ")"; })
+            .each(plot);
+
+            // Titles for the diagonal.
+            cell.filter(function(d) { return d.i === d.j; }).append("text")
+            .attr("x", padding)
+            .attr("y", padding)
+            .attr("dy", ".71em")
+            .text(function(d) { return d.x; });
+
+
+            function plot(p) {
+               var cell = d3.select(this);
+
+               x.domain(domainByTrait[p.x]);
+               y.domain(domainByTrait[p.y]);
+
+               cell.append("rect")
+               .attr("class", "frame")
+               .attr("x", padding / 2)
+               .attr("y", padding / 2)
+               .attr("width", size - padding)
+               .attr("height", size - padding);
+
+               cell.selectAll("circle")
+               .data(data)
+               .enter().append("circle")
+               .attr("cx", function(d) { return x(d[p.x]); })
+               .attr("cy", function(d) { return y(d[p.y]); })
+               .attr("r", 3)
+               .style("fill", function(d) { return color(d.species); });
+            }
+            */
+         }
+
+      </script>
+
+   </body>
+</head>
