@@ -101,14 +101,14 @@ test_data.push(data[4]);
 test_data.push(data[5]);
 test_data.push(data[6]);
 test_data.push(data[7]);
-test_data.push(data[0]);
-test_data.push(data[1]);
-test_data.push(data[2]);
-test_data.push(data[3]);
-test_data.push(data[4]);
-test_data.push(data[5]);
-test_data.push(data[6]);
 test_data.push(data[7]);
+test_data.push(data[6]);
+test_data.push(data[5]);
+test_data.push(data[4]);
+test_data.push(data[3]);
+test_data.push(data[2]);
+test_data.push(data[1]);
+test_data.push(data[0]);
 
 var tsne_data = get_coactivation_data(net, test_data);
 var raw_data = get_coactivation_data(no_train, test_data);
@@ -300,29 +300,32 @@ function data_to_sankey(network, filename) {
    for (var l=0; l<(layers-1); l++) {
       var L = network.layers[l];
       console.log("Layer "+l+": "+L.layer_type);
-      var neurons = network.layers[l].out_act.w.length;
-      var next = network.layers[l+1].out_act.w.length;
-      //console.log("layer: "+l);
-      
-      for (var n=0; n<neurons; n++) {
-         var name = "L"+l+"N"+n;
-         //data.nodes.push({"names":name, "l":l, "n":n, "points":points[count+n]});
-         data.nodes.push({"name":name,"value":points[count+n]});
+      //if (L.layer_type != 'fc') {
+         var neurons = network.layers[l].out_act.w.length;
+         var next = network.layers[l+1].out_act.w.length;
+         //console.log("layer: "+l);
+         for (var n=0; n<neurons; n++) {
+            var name = "L"+l+"N"+n;
+            //data.nodes.push({"names":name, "l":l, "n":n, "points":points[count+n]});
+            data.nodes.push({"name":name,"layer":L.layer_type,"value":points[count+n]});
 
-         data.meta.push({"size":(n+1)*100, "pos":points[count+n]});
-         //console.log("\tneuron: "+(count+n));
-         if (l<(layers-2)) {
-            for (var n2=0; n2<next; n2++) {
-               //console.log("\t\tto neuron: "+(count+neurons+n2));
-               //console.log(count+neurons+n2);
-               data.links.push({"source":count+n,
-               "target":count+neurons+n2,
-               "value":1-Math.abs(points[count+neurons+n2]-points[count+n]),
-               "v1":points[count+n],
-               "v2":points[count+neurons+n2]});
+            data.meta.push({"size":Math.abs(network.layers[l].out_act.w[n]),
+               "pos":points[count+n]});
+            //console.log("\tneuron: "+(count+n));
+            if (l<(layers-2)) {
+               for (var n2=0; n2<next; n2++) {
+                  //console.log("\t\tto neuron: "+(count+neurons+n2));
+                  //console.log(count+neurons+n2);
+                  data.links.push({"source":count+n,
+                     "target":count+neurons+n2,
+                     //"value":Math.sqrt(points[count+neurons+n2]^2+points[count+n]^2),
+                     "value":1-Math.abs(points[count+neurons+n2]-points[count+n]),
+                     "v1":points[count+n],
+                     "v2":points[count+neurons+n2]});
+               }
             }
          }
-      }
+      //}
       count = count + neurons;
    }
 

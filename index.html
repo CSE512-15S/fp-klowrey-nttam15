@@ -134,7 +134,7 @@
             for (var n=0; n<data_s.nodes.length; n++) {
                data_s.nodes[n].size = data_s.meta[n].size;
                if (data_s.meta[n].pos.length == 1) {
-                  data_s.nodes[n].pos = [];
+                  data_s.nodes[n].pos = [];-0.3
                   data_s.nodes[n].pos.push(mapRange([-1, 1], [0, height/2], data_s.meta[n].pos[0]));
 
                   console.log("before: "+data_s.meta[n].pos[0]+"mapped: " +data_s.nodes[n].pos[0]);
@@ -145,15 +145,18 @@
             console.log(data_s.nodes);
 
             //console.log(sankey)
+            var node_scale = 10;
+            var link_scale = 20;
+            var link_opcty = 2;
 
             var link = svg.append("g").selectAll(".link")
             .data(data_s.links)
             .enter().append("path")
             .attr("class", "link")
             .attr("d", path)
-            .style("stroke-width", function(d) { return Math.max(1, d.dy)/2; })
+            .style("stroke-width", function(d) { return Math.max(1, link_scale*d.value); })
             .sort(function(a, b) { return b.dy - a.dy; })
-            .style("opacity", function(d) { return d.value/3; });
+            .style("opacity", function(d) { return d.value/link_opcty; });
 
             link.append("title")
             .text(function(d) {
@@ -187,6 +190,11 @@
 
             //////////////////////////////////////////////
             // circular sankey nodes
+            // size is weights of neurons; get min and max and scale between
+            var node_max = d3.max(data_s.meta, function(d) {return d.size;});
+            var node_min = d3.min(data_s.meta, function(d) {return d.size;});
+            console.log("min max " + node_min+" "+node_max);
+
             node.append("circle")
                .attr("cx", sankey.nodeWidth()/2)
                .attr("cy", function (d) { 
@@ -195,12 +203,17 @@
                })
                .attr("r", function (d) { 
                   //console.log("size: "+d.size+" dy: "+d.dy);
-                  return Math.sqrt(d.size);
+                  //return Math.sqrt(d.size*100);
+                  return mapRange([node_min, node_max], [5, 20], d.size);
                   //return Math.sqrt(d.dy);
                   })
                .style("opacity", 0.6)
                .append("title")
-               .text(function(d) { return d.name + "\n" + format(d.value)+ "\n" + format(d.dy); });
+               .text(function(d) { return d.name + "\n"
+                  + "Val: "+format(d.value)+ "\n"
+                  + "L: "+d.layer+ "\n"
+                  + format(d.dy) + "\n"
+                  + format(d.size); });
 
             node.append("text")
                .attr("x", -6)
@@ -214,8 +227,8 @@
                .attr("text-anchor", "start");
 
             function dragmove(d) {
-               //d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
-               d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.pos[0], d3.event.y)) ) + ")");
+               d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
+               //d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.pos[0], d3.event.y)) ) + ")");
                sankey.relayout();
                link.attr("d", path);
             }
