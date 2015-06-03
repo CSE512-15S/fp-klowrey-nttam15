@@ -50,9 +50,11 @@ d3.sankey = function() {
       computeNodeDepths(iterations);
       computeLinkDepths();
 
+      /*
       nodes.forEach(function(node) {
          console.log(node.name+" : "+node.value + " : "+node.dy);
          });
+         */
       return sankey;
    };
 

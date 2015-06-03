@@ -98,9 +98,10 @@ body {
 </style>
 
 <script src="scripts/jquery-2.1.4.min.js"></script>
-<script src="build/vis.js"></script>
-<script src="build/util.js"></script>
-<script src="build/convnet.js"></script>
+<script src="scripts/vis.js"></script>
+<script src="scripts/util.js"></script>
+<script src="scripts/convnet-min.js"></script>
+<script src="scripts/tsne.js"></script>
 
 <script src="mnist/mnist_labels.js"></script>
 
@@ -109,9 +110,9 @@ body {
 var layer_defs, net, trainer;
 var t = "layer_defs = [];\n\
 layer_defs.push({type:'input', out_sx:24, out_sy:24, out_depth:1});\n\
-layer_defs.push({type:'conv', sx:5, filters:8, stride:1, pad:2, activation:'relu'});\n\
+layer_defs.push({type:'conv', sx:5, filters:4, stride:1, pad:2, activation:'relu'});\n\
 layer_defs.push({type:'pool', sx:2, stride:2});\n\
-layer_defs.push({type:'conv', sx:5, filters:16, stride:1, pad:2, activation:'relu'});\n\
+layer_defs.push({type:'conv', sx:5, filters:8, stride:1, pad:2, activation:'relu'});\n\
 layer_defs.push({type:'pool', sx:3, stride:3});\n\
 layer_defs.push({type:'softmax', num_classes:10});\n\
 \n\
@@ -225,6 +226,7 @@ var load_data_batch = function(batch_num) {
     loaded[batch_num] = true;
     if(batch_num < 20) { loaded_train_batches.push(batch_num); }
     console.log('finished loading data batch ' + batch_num);
+    console.log(img_data);
   };
   data_img_elt.src = "mnist/mnist_batch_" + batch_num + ".png";
 }
@@ -290,10 +292,10 @@ var visualize_activations = function(net, elt) {
 
   // show activations in each layer
   var N = net.layers.length;
-  console.log("Number of Layers: "+N);
+  //console.log("Number of Layers: "+N);
   for(var i=0;i<N;i++) {
     var L = net.layers[i];
-    console.log("\tLayer "+i+": "+L.layer_type);
+    //console.log("\tLayer "+i+": "+L.layer_type);
 
     var layer_div = document.createElement('div');
 
@@ -453,6 +455,165 @@ var test_predict = function() {
   }
 }
 
+var test_predict_coactivate = function() {
+   var num_classes = net.layers[net.layers.length-1].out_depth;
+   var layers = net.layers.length;
+
+   var activations = [];
+   var count = 0;
+   for (var l=0; l<(layers); l++) {
+      var type = net.layers[l].layer_type;
+      if (type != "fc" && type != "conv") {
+         var neurons = net.layers[l].out_act.w.length;
+         for (var nw=0; nw<(neurons); nw++) {
+            activations[count] = [];
+            count = count+1;
+         }
+      }
+   }
+   console.log(count+" total neurons");
+
+
+  // grab a random test image
+   for(num=0;num<25;num++) {
+      var sample = sample_test_instance();
+      var y = sample.label;  // ground truth label
+
+      // forward prop it through the network
+      //var aavg = new convnetjs.Vol(1,1,num_classes,0.0);
+
+      // ensures we always have a list, regardless if above returns single item or list
+      var xs = [].concat(sample.x);
+      var num_tests = xs.length;
+      console.log(num+" testing Mnist with "+num_tests+" samples.");
+
+      // TODO more than just one 
+      for(var i=0;i<num_tests;i++) {
+         console.log("\tTest input: "+i);
+         var a = net.forward(xs[i]);
+         //aavg.addFrom(a);
+         layer_data(net, activations);
+      }
+   }
+   console.log("Activation data length: "+activations.length);
+   console.log("           data length: "+activations[0].length);
+   console.log(activations);
+
+    /*
+    var preds = [];
+    for(var k=0;k<aavg.w.length;k++) {
+       preds.push({k:k,p:aavg.w[k]});
+    }
+    preds.sort(function(a,b){return a.p<b.p ? 1:-1;});
+       */
+    
+    //var div = document.createElement('div');
+    //div.className = 'testdiv';
+
+    // draw the image into a canvas
+    //draw_activations(div, xs[0], 2); // draw Vol into canv
+
+    // save to file 
+    return activations;
+
+    //var opt = {epsilon: 10, perplexity: 30, dim: 1};
+    //console.log("getting tsne data");
+    //var points = get_tsne(opt, activations, 100);
+
+    //var tsne_output = JSON.stringify(points);
+    //console.log("\tgot tsne data");
+    //return data_to_sankey( net, 'mnist_sankey', points);
+}
+
+function layer_data(network, act) {
+   var layers = network.layers.length;
+   var count = 0;
+   for (var l=0; l<(layers); l++) {
+      var type = network.layers[l].layer_type;
+      if (type != "fc" && type != "conv") {
+         //console.log("layer "+l+" "+type);
+         var neurons = network.layers[l].out_act.w.length;
+         for (var nw=0; nw<neurons; nw++) {
+            //console.log("\tweight "+nw);
+            weight = network.layers[l].out_act.w[nw];
+            act[count].push(weight);
+            count = count+1;
+         }
+      }
+   }
+}
+
+function get_tsne(options, data, iters) {
+   var tsne = new tsnejs.tSNE(options); // create a tSNE instance
+   console.log("tSNE options set");
+   tsne.initDataDist(data);
+   console.log("tSNE initialized");
+   if (iters <= 0) {
+      return null;
+   }
+   for(var k = 0; k < iters; k++) {
+      if (k % 50 == 0) {
+         console.log("\t\t"+k+" tSNE iterations out of "+iters);
+      }
+      tsne.step(); // every time you call this, solution gets better
+   }
+   return tsne.getSolution();
+}
+
+var data_to_sankey = function(network, filename, points) {
+
+   var data = {"nodes":[], "links":[], "meta":[]};
+
+   // for each layer, add nodes for each neuron
+   var count = 0;
+   var layers = network.layers.length;
+   console.log("SAVING TO FILE: "+filename);
+
+   for (var l=0; l<(layers-1); l++) {
+      var L = network.layers[l];
+      console.log("Layer "+l+": "+L.layer_type);
+      //if (L.layer_type != "fc" && L.layer_type != "conv") {
+         var neurons = network.layers[l].out_act.w.length;
+         var next = network.layers[l+1].out_act.w.length;
+         console.log("layer: "+l);
+         for (var n=0; n<neurons; n++) {
+            var name = "L"+l+"N"+n;
+            data.nodes.push({"name":name,
+                  "layer":L.layer_type,
+                  "value":points[count+n]});
+            data.meta.push({"size":Math.abs(network.layers[l].out_act.w[n]),
+               "pos":points[count+n]});
+            if (l<(layers-2)) {
+               for (var n2=0; n2<next; n2++) {
+                  //console.log("\t\tto neuron: "+(count+neurons+n2));
+                  //console.log(count+neurons+n2);
+                  //data.links.push({"source":count+n,
+                  //   "target":count+neurons+n2,
+                  //   //"value":Math.sqrt(points[count+neurons+n2]^2+points[count+n]^2),
+                  //   "value":1-Math.abs(points[count+neurons+n2]-points[count+n]),
+                  //   "v1":points[count+n],
+                  //   "v2":points[count+neurons+n2]});
+               }
+            }
+         }
+      //}
+      count = count + neurons;
+   }
+   return data;
+}
+
+/*
+function to_file(str, filename) {
+   var fs = require('fs');
+   fs.writeFile(filename, str, function(err) {
+      if (err) {
+         console.log(err);
+      } else {
+         console.log("json saved to "+filename);
+      }
+   });
+}
+*/
 
 var lossGraph = new cnnvis.Graph();
 var xLossWindow = new cnnutil.Window(100);
@@ -566,6 +727,12 @@ var toggle_pause = function() {
 var dump_json = function() {
   document.getElementById("dumpjson").value = JSON.stringify(net.toJSON());
 }
+var dump_coact = function() {
+  // TODO
+  // run TSNE gather and output
+  var tsne_data = test_predict_coactivate();
+  document.getElementById("dump_coactivations").value = JSON.stringify(tsne_data);
+}
 var clear_graph = function() {
   lossGraph = new cnnvis.Graph(); // reinit graph too 
 }
@@ -632,8 +799,10 @@ var change_net = function() {
       </div>
 
       <input id="buttondj" type="submit" value="save network snapshot as JSON" onclick="dump_json();"/><br />
+      <input id="buttondj" type="submit" value="save coactivations from test" onclick="dump_coact();"/><br />
       <input id="buttonlfj" type="submit" value="init network from JSON snapshot" onclick="load_from_json();"/><br />
       <textarea id="dumpjson"></textarea>
+      <textarea id="dump_coactivations"></textarea>
     </div>
     <div class="secpart">
       

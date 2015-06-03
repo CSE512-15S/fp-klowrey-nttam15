@@ -188,7 +188,8 @@ var opt = {epsilon: 10, perplexity: 30, dim: 1};
 
 function get_tsne(options, data, iters) {
    var tsne = new tsnejs.tSNE(options); // create a tSNE instance
-   tsne.initDataDist(tsne_data);
+   //tsne.initDataDist(tsne_data);
+   tsne.initDataRaw(tsne_data);
    if (iters <= 0) {
       return null;
    }
@@ -287,9 +288,9 @@ function data_to_rawtsne(network, filename) {
 
 ////////// write out json file of data for sankey
 
-data_to_sankey(net, 'data/tsne_sankey.json');
+data_to_sankey(net, 'data/tsne_sankey.json', points);
 
-function data_to_sankey(network, filename) {
+function data_to_sankey(network, filename, points) {
 
    var data = {"nodes":[], "links":[], "meta":[]};
 
@@ -328,17 +329,7 @@ function data_to_sankey(network, filename) {
       //}
       count = count + neurons;
    }
-
-/*
-   for (var l=0; l<(layers-1); l++) {
-      for (var n=0; n<neurons; n++) {
-         data.nodes.push({"size":(n+1)*100});
-      }
-   }
-   */
-
    // get the link data too
-   
    var str = JSON.stringify(data, null, 2); 
     
    var fs = require('fs');

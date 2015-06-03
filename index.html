@@ -8,7 +8,8 @@
       @import url(style.css?aea6f0a);
 
       #chart {
-         height: 500px;
+         widht: 960px;
+         height: 800px;
          background-color: #f0f0f0;
       }
 
@@ -43,27 +44,21 @@
    <body>
 
       <header>
-         <aside>May 22, 2012</aside>
-         <a href="../" rel="author">Mike Bostock</a>
+         <p>Data Visualization CSE 512, Spring 2015</p>
       </header>
 
-      <h1>Sankey Diagrams</h1>
+      <h1>Neural Net Visual</h1>
 
       <p id="chart"></p>
 
 
       <aside>Drag to rearrange nodes.</aside>
       <aside>Sankey diagrams are closely related to <a href="http://en.wikipedia.org/wiki/Alluvial_diagram">alluvial diagrams</a>, which show how network structure changes over time.</aside>
-      <p>The fully automatic layout is convenient for rapid visualization—positioning nodes manually is tedious! However, the algorithm is not perfect; links are drawn with partial transparency to highlight crossings. To improve readability and further disambiguate links, this example also lets you reposition nodes interactively. The algorithm could be improved in the future, say to minimize link crossing or to support loopback in cyclical networks.</p>
-      <p>Many thanks to Tom Counsell, whose <a href="http://tamc.github.com/Sankey/">Sankey library</a> provided inspiration for this example.</p>
 
-      <!--
-      <p id="small_mult"></p>
-      -->
+      <p>The fully automatic layout is convenient for rapid visualization—positioning nodes manually is tedious! However, the algorithm is not perfect; links are drawn with partial transparency to highlight crossings. To improve readability and further disambiguate links, this example also lets you reposition nodes interactively. The algorithm could be improved in the future, say to minimize link crossing or to support loopback in cyclical networks.</p>
 
       <footer>
-         <aside>May 22, 2012</aside>
-         <a href="../" rel="author">Mike Bostock</a>
+         <p>Data Visualization CSE 512, Spring 2015</p>
       </footer>
 
       <script src="scripts/d3.v3.min.js"></script>
@@ -71,19 +66,19 @@
       <script src="scripts/queue.v1.min.js"></script>
       <script>
 
-         var margin = {top: 1, right: 1, bottom: 6, left: 1},
-         width = 960 - margin.left - margin.right,
-         height = 500 - margin.top - margin.bottom,
-         size = 150,
-         padding = 19.5;
+         var m_width = 960;
+         var m_height = 800;
+         var margin = {top: 10, right: 10, bottom: 6, left: 10};
+         var width = m_width - margin.left - margin.right;
+         var height = m_height - margin.top - margin.bottom;
 
          var formatNumber = d3.format(",.3f");
          var format = function(d) { return formatNumber(d); };
          var color = d3.scale.category20();
 
          var svg = d3.select("#chart").append("svg")
-         .attr("width", width + margin.left + margin.right)
-         .attr("height", height + margin.top + margin.bottom)
+         .attr("width", m_width)
+         .attr("height", m_height)
          .append("g")
          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -109,7 +104,9 @@
          .projection(function(d) { return [d.y, d.x]; });
 
          queue()
-         .defer(d3.json, "data/tsne_sankey.json")
+         //.defer(d3.json, "data/tsne_sankey.json")
+         //.defer(d3.json, "data/mnist_sankey.json")
+         .defer(d3.json, "data/mnist_sankey_v2.json")
          .defer(d3.json, "data/tsne_points.json")
          //.defer(d3.json, "data/energy.json")
          .await(ready);
@@ -120,9 +117,9 @@
 
          function ready(error, data_s, net) {
 
-            //console.log(data_s.nodes.length)
-            //console.log(data_s.links.length)
-            //console.log(data_s.meta.length)
+            console.log("nodes: "+data_s.nodes.length)
+            console.log("links: "+data_s.links.length)
+            console.log("meta:  "+data_s.meta.length)
 
             sankey
             .nodes(data_s.nodes)
@@ -130,7 +127,6 @@
             .layout(32);
 
             // combine additional data into node strutures
-            console.log("height:" + height);
             for (var n=0; n<data_s.nodes.length; n++) {
                data_s.nodes[n].size = data_s.meta[n].size;
                if (data_s.meta[n].pos.length == 1) {
@@ -142,12 +138,14 @@
                   data_s.nodes[n].pos = data_s.meta[n].pos;
                }
             }
-            console.log(data_s.nodes);
+            //console.log(data_s.nodes);
 
             //console.log(sankey)
+            // TODO these options should probably be in the json files or
+            // somehow set to change depending on which network is currently visualized
             var node_scale = 10;
-            var link_scale = 20;
-            var link_opcty = 2;
+            var link_scale = 2;
+            var link_opcty = 10;
 
             var link = svg.append("g").selectAll(".link")
             .data(data_s.links)
@@ -156,7 +154,7 @@
             .attr("d", path)
             .style("stroke-width", function(d) { return Math.max(1, link_scale*d.value); })
             .sort(function(a, b) { return b.dy - a.dy; })
-            .style("opacity", function(d) { return d.value/link_opcty; });
+            .style("opacity", function(d) { return Math.min(0.5, d.value/link_opcty); });
 
             link.append("title")
             .text(function(d) {

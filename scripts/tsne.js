@@ -210,6 +210,7 @@ var tsnejs = tsnejs || { REVISION: 'ALPHA' };
       // convert D to a (fast) typed array version
       var dists = zeros(N * N); // allocate contiguous array
       for(var i=0;i<N;i++) {
+         if (i % 100 == 0) { console.log("\ttSNE "+i); }
         for(var j=i+1;j<N;j++) {
           var d = D[i][j];
           dists[i*N+j] = d;
