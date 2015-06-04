@@ -48,9 +48,16 @@
       </header>
 
       <h1>Neural Net Visual</h1>
-
+	<form>
+		<input type = "radio" value = "XoR" name = "Network" id = "XoRNet" checked> XoR NetWork
+		<input type = "radio" value = "MNIST" name = "Network" id = "MNISTNet"> MNIST Network
+		<input type = "radio" value = "Robotic" name = "NetWork" id = "RoboNet"> Robotic Network
+	</form>
       <p id="chart"></p>
-
+	<div>
+		<button onclick = "Render()"> Display </button>
+		<button onclick = "Reset()"> Clear </button>
+	</div>
 
       <aside>Drag to rearrange nodes.</aside>
       <aside>Sankey diagrams are closely related to <a href="http://en.wikipedia.org/wiki/Alluvial_diagram">alluvial diagrams</a>, which show how network structure changes over time.</aside>
@@ -102,14 +109,43 @@
                "y":d.target.x + sankey.nodeWidth()/2};
          })
          .projection(function(d) { return [d.y, d.x]; });
-
-         queue()
+		function Render() {
+			var radios = document.getElementsByTagName('input');
+				var value
+				for (var i =0; i <radios.length; i++) {
+					if(radios[i].type === "radio" && radios[i].checked) {
+						value = radios[i].value;
+					}			
+				} 			
+				if (value === "XoR") {
+						queue()
+						.defer(d3.json, "data/tsne_sankey.json")
+						.defer(d3.json, "data/tsne_points.json")
+						//.defer(d3.json, "data/energy.json")
+						.await(ready);
+				}
+				else if (value === "MNIST") {
+						//alert("MNIST Network");
+						queue()
+						.defer(d3.json, "data/mnist_sankey_v2.json")
+						.defer(d3.json, "data/tsne_points.json")
+						.await(ready);
+				}
+				else {
+				}		
+			}
+		function Reset() {
+				d3.select("svg").remove();
+			
+			}
+		
+         //queue()
          //.defer(d3.json, "data/tsne_sankey.json")
          //.defer(d3.json, "data/mnist_sankey.json")
-         .defer(d3.json, "data/mnist_sankey_v2.json")
-         .defer(d3.json, "data/tsne_points.json")
+         //.defer(d3.json, "data/mnist_sankey_v2.json")
+         //.defer(d3.json, "data/tsne_points.json")
          //.defer(d3.json, "data/energy.json")
-         .await(ready);
+         //.await(ready);
 
          var mapRange = function(from, to, s) {
             return to[0] + (s - from[0]) * (to[1] - to[0]) / (from[1] - from[0]);
