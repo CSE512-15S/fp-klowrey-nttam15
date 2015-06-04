@@ -96,7 +96,7 @@ d3.sankey = function() {
          node.sourceLinks = [];
          node.targetLinks = [];
       });
-      links.forEach(function(link) {
+      links.forEach(function(link, i) {
          var source = link.source,
          target = link.target;
          if (typeof source === "number") source = link.source = nodes[link.source];

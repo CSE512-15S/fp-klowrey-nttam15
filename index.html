@@ -50,9 +50,18 @@
       </header>
 
       <h1>Neural Net Visual</h1>
-
+	<form>
+		<input type = "radio" value = "Big XoR" name = "Network" id = "BigXoRNet" checked> Big XoR NetWork
+		<input type = "radio" value = "Big XoR Untrained" name = "Network" id = "UnXoRNet" > Untrained XoR NetWork
+		<input type = "radio" value = "Small XoR" name = "Network" id = "SmallXoRNet" > Small XoR NetWork
+		<input type = "radio" value = "MNIST" name = "Network" id = "MNISTNet"> MNIST Network
+		<input type = "radio" value = "Robotic" name = "NetWork" id = "RoboNet"> Robotic Network
+	</form>
       <p id="chart"></p>
-
+	<div>
+		<button onclick = "Render()"> Display </button>
+		<button onclick = "Reset()"> Clear </button>
+	</div>
 
       <!-- TODO DELETE
       <aside>Drag to rearrange nodes.</aside>
@@ -113,17 +122,58 @@
          })
          .projection(function(d) { return [d.y, d.x]; });
 
-         queue()
+		   function Render() {
+			   var radios = document.getElementsByTagName('input');
+			   	var value
+			   	for (var i =0; i <radios.length; i++) {
+			   		if(radios[i].type === "radio" && radios[i].checked) {
+			   			value = radios[i].value;
+			   		}			
+			   	} 			
+			   	if (value === "Big XoR") {
+			   			queue()
+			   			.defer(d3.json, "data/xor_sankey.json")
+			   			.defer(d3.json, "data/tsne_points.json")
+			   			.await(ready);
+			   	}
+               else if (value === "Big XoR Untrained") {
+			   			queue()
+			   			.defer(d3.json, "data/xor_notrain_sankey.json")
+			   			.defer(d3.json, "data/tsne_points.json")
+			   			.await(ready);
+			   	}
+               else if (value === "Small XoR") {
+			   			queue()
+			   			.defer(d3.json, "data/xor_smaller_sankey.json")
+			   			.defer(d3.json, "data/tsne_points.json")
+			   			.await(ready);
+			   	}
+			   	else if (value === "MNIST") {
+			   			//alert("MNIST Network");
+			   			queue()
+			   			.defer(d3.json, "data/mnist_sankey_v2.json")
+			   			.defer(d3.json, "data/tsne_points.json")
+			   			.await(ready);
+			   	}
+			   	else {
+			   	}		
+			   }
+		   function Reset() {
+				d3.select("link").remove();
+				d3.select("node").remove();
+			}
+		
+         //queue()
          //.defer(d3.json, "data/tsne_sankey.json")
          //.defer(d3.json, "data/mnist_sankey.json")
          //.defer(d3.json, "data/mnist_sankey_v2.json")
          //.defer(d3.json, "data/xor_sankey.json")
-         .defer(d3.json, "data/xor_notrain_sankey.json")
+         //.defer(d3.json, "data/xor_notrain_sankey.json")
          //.defer(d3.json, "data/xor_smaller_sankey.json")
 
-         .defer(d3.json, "data/tsne_points.json")
+         //.defer(d3.json, "data/tsne_points.json")
          //.defer(d3.json, "data/energy.json")
-         .await(ready);
+         //.await(ready);
 
          var mapRange = function(from, to, s) {
             return to[0] + (s - from[0]) * (to[1] - to[0]) / (from[1] - from[0]);

@@ -16,3 +16,15 @@ todo:
 
 switching between the different networks (so var xor and mnist)
 online training and rendering of a network (xor?)
+
+
+Networks:
+XOR: big trained
+XOR: big untrained
+XOR: small 
+
+mnist: 64, 32, 32 trained
+ ? mnist: 64, 32, 32 untrained
+ ? mnist: conv?
+
+robot:
