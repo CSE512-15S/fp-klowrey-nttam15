@@ -3,13 +3,15 @@ var tsnejs = require('./scripts/tsne');
 var convnetjs = require('./scripts/convnet-min');
 
 
-var output_type = 'softmax'
+//var output_type = 'softmax'
+var output_type = 'regression'
+
 // make layers
 var layer_defs = [];
 // input layer of size 1x1x2 (all volumes are 3D)
 layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:3});
 // some fully connected layers
-layer_defs.push({type:'fc', num_neurons:16, activation:'sigmoid'});
+layer_defs.push({type:'fc', num_neurons:8, activation:'relu'});
 //layer_defs.push({type:'fc', num_neurons:3, activation:'sigmoid'});
 //layer_defs.push({type:'fc', num_neurons:20, activation:'relu'});
 // a softmax classifier predicting probabilities for two classes: 0,1
@@ -23,7 +25,7 @@ layer_defs.push({type:'regression', num_neurons:1});
 
 var small_l = []
 small_l.push({type:'input', out_sx:1, out_sy:1, out_depth:3});
-small_l.push({type:'fc', num_neurons:4, activation:'sigmoid'});
+small_l.push({type:'fc', num_neurons:4, activation:'relu'});
 if (output_type == 'softmax') {
 small_l.push({type:'softmax', num_classes:2});
 }
@@ -114,8 +116,29 @@ function train_network(train, d, l, iter) {
    console.log('loss = ' + avloss + ', 100 cycles through data in ' + time + 'ms');
 }
 
+
+function bad_train_network(train, d, l, iter) {
+   var start = new Date().getTime();
+   // 1 x 1, with a depth of 2 ( vector length 2 )
+   //x.w = d[ix];
+   var avloss = 0.0;
+   for(var iters=0;iters<iter;iters++) {
+      for(var ix=0;ix<N;ix++) {
+         x.w = d[ix];
+         //var stats = train.train(x, Math.round(Math.random()));
+         var stats = train.train(x, Math.round(Math.random()));
+         avloss += stats.loss;
+      }
+   }
+   avloss /= N*iters;
+
+   var end = new Date().getTime();
+   var time = end - start;
+
+   console.log('loss = ' + avloss + ', 100 cycles through data in ' + time + 'ms');
+}
 train_network(trainer, data, labels, 4000);
-train_network(notrainer, data, labels, 10);
+bad_train_network(notrainer, data, 4000);
 train_network(strainer,data, labels, 4000);
 
 console.log("\nBig Trained");
@@ -139,7 +162,7 @@ for(var ix=0;ix<N;ix++) {
 //save_net_to_json(net, 'trained_network.json');
 
 var test_data = [];
-for (var i=0; i<256; i++) {
+for (var i=0; i<26; i++) {
    var idx = Math.floor(Math.random() * data.length);
    test_data.push(data[idx]);
 }

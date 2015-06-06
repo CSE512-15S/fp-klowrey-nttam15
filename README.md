@@ -18,13 +18,28 @@ switching between the different networks (so var xor and mnist)
 online training and rendering of a network (xor?)
 
 
-Networks:
+# Networks:
 XOR: big trained
+
 XOR: big untrained
+
 XOR: small 
 
+
 mnist: 64, 32, 32 trained
+
  ? mnist: 64, 32, 32 untrained
+
  ? mnist: conv?
 
+
 robot:
+
+? still getting these 
+
+# TODO
+Layout and UI
+List of which networks are available with text blurb as description
+
+onlick for css effects
+

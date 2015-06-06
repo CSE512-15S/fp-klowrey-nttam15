@@ -17,6 +17,14 @@
       <script src="scripts/d3.v3.min.js"></script>
       <script src="scripts/sankey.js"></script>
       <script src="scripts/queue.v1.min.js"></script>
+
+      <script src="scripts/jquery.min.js"></script>
+      <script src="scripts/jquery.dropotron.min.js"></script>
+      <script src="scripts/skel.min.js"></script>
+      <script src="scripts/util.js"></script>
+      <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+      <script src="scripts/main.js"></script>
+
    </head>
    <style>
 
@@ -64,277 +72,371 @@
 		<div class="container">
          -->
          <div id="header-wrapper">
-      <header class="clearfix">
-				<span>CSE 512</span>
-				<h1>Neural Networks: How do they even?</h1>
-      </header>
+            <div id="header" class="container">
+               <span>CSE 512</span>
+               <h1>Neural Networks: How do they even?</h1>
+               <!-- Nav -->
+               <nav id="nav">
+                  <ul>
+                     <li>
+                        <a id="xor" href="#">XOR</a>
+                        <ul>
+                           <li><a id="xor_u" href="#">Big XOR Untrained</a></li>
+                           <li><a id="xor_t" href="#">Big XOR Trained</a></li>
+                           <li><a id="xor_s" href="#">Small Xor Trained</a></li>
+                        </ul>
+                     </li>
+                     <li>
+                        <a id="mnist" href="#">MNIST</a>
+                        <ul>
+                           <li><a id="mnist_s" href="#">Big MNIST</a></li>
+                           <li><a id="mnist_c" href="#">Convolutional</a></li>
+                        </ul>
+                     </li>
+                     <li>
+                        <a id="robot" href="#">Robotics Control</a>
+                        <ul>
+                           <li><a id="robot_h" href="#">Humanoid</a></li>
+                           <li><a id="robot_s" href="#">Spider</a></li>
+                        </ul>
+                     </li>
+                     <!--
+                     <li><a href="left-sidebar.html">Left Sidebar</a></li>
+                     <li class="break"><a href="right-sidebar.html">Right Sidebar</a></li>
+                     <li><a href="no-sidebar.html">No Sidebar</a></li>
+                     -->
+                  </ul>
+               </nav>
+            </div>
+         </div>
 
-      <!--
-      <ul class="cbp-vimenu ">
-         <li><a href="#" class="icon-logo">Logo</a></li>
-         <li><a href="#" class="icon-archive">Archive</a></li>
-         <li><a href="#" class="icon-search">Search</a></li>
-         <li><a href="#" class="icon-pencil">Pencil</a></li>
-         <li class="cbp-vicurrent"><a href="#" class="icon-pencil">Pencil</a></li>
-         <li><a href="#" class="icon-location">Location</a></li>
-         <li><a href="#" class="icon-images">Images</a></li>
-         <li><a href="#" class="icon-download">Download</a></li>
-      </ul>
+         <!--
+         <ul class="cbp-vimenu ">
+            <li><a href="#" class="icon-logo">Logo</a></li>
+            <li><a href="#" class="icon-archive">Archive</a></li>
+            <li><a href="#" class="icon-search">Search</a></li>
+            <li><a href="#" class="icon-pencil">Pencil</a></li>
+            <li class="cbp-vicurrent"><a href="#" class="icon-pencil">Pencil</a></li>
+            <li><a href="#" class="icon-location">Location</a></li>
+            <li><a href="#" class="icon-images">Images</a></li>
+            <li><a href="#" class="icon-download">Download</a></li>
+         </ul>
          -->
 
-      <div class="main">
-      <form>
-         <input type = "radio" value = "Big XoR" name = "Network" id = "BigXoRNet" checked> Big XoR NetWork
-         <input type = "radio" value = "Big XoR Untrained" name = "Network" id = "UnXoRNet" > Untrained XoR NetWork
-         <input type = "radio" value = "Small XoR" name = "Network" id = "SmallXoRNet" > Small XoR NetWork
-         <input type = "radio" value = "MNIST" name = "Network" id = "MNISTNet"> MNIST Network
-         <input type = "radio" value = "Robotic" name = "NetWork" id = "RoboNet"> Robotic Network
-      </form>
-      <p id="chart"></p>
-      <div>
-         <button onclick = "Render()"> Display </button>
-         <button onclick = "Reset()"> Clear </button>
-      </div>
+         <div class="wrapper">
+            <div class="container">
+               <form>
+                  <input type = "radio" value = "Big XoR" name = "Network" id = "BigXoRNet" checked> Big XoR NetWork
+                  <input type = "radio" value = "Big XoR Untrained" name = "Network" id = "UnXoRNet" > Untrained XoR NetWork
+                  <input type = "radio" value = "Small XoR" name = "Network" id = "SmallXoRNet" > Small XoR NetWork
+                  <input type = "radio" value = "MNIST" name = "Network" id = "MNISTNet"> MNIST Network
+                  <input type = "radio" value = "Robotic" name = "NetWork" id = "RoboNet"> Robotic Network
+               </form>
+               <div class="row 150%">
+                  <div class="8u 12u(narrower)">
+                     <!-- Content -->
+                     <article id="content">
+                        <header>
+                           <h2>Network Name</h2>
+                        </header>
+                        <p id="chart"></p>
+                     </article>
+                  </div>
+                  <div class="4u 12u(narrower)">
+                     <!-- Sidebar -->
+                     <section id="sidebar">
+                        <section>
+                           <header>
+                              <h3>Network Info</h3>
+                           </header>
+                           <p>Text about this network</p>
+                           <ul class="actions">
+                              <li><a href="#" class="button">Magna amet nullam</a></li>
+                           </ul>
+                        </section>
+                        <section>
+                           <header>
+                              <h3>Network Stats</h3>
+                           </header>
+                           <p>Loss function, etc</p>
+                           <ul class="actions">
+                              <li><a href="#" class="button">Ipsum sed dolor</a></li>
+                           </ul>
+                        </section>
+                     </section>
+                  </div>
+               </div>
+
+               <div>
+                  <button onclick = "Render()"> Display </button>
+                  <button onclick = "Reset()"> Clear </button>
+               </div>
 
 
-      <p>The fully automatic layout is convenient for rapid visualization—positioning nodes manually is tedious! However, the algorithm is not perfect; links are drawn with partial transparency to highlight crossings. To improve readability and further disambiguate links, this example also lets you reposition nodes interactively. The algorithm could be improved in the future, say to minimize link crossing or to support loopback in cyclical networks.</p>
+               <p>The fully automatic layout is convenient for rapid visualization—positioning nodes manually is tedious! However, the algorithm is not perfect; links are drawn with partial transparency to highlight crossings. To improve readability and further disambiguate links, this example also lets you reposition nodes interactively. The algorithm could be improved in the future, say to minimize link crossing or to support loopback in cyclical networks.</p>
 
-      <footer>
-         <p>Data Visualization CSE 512, Spring 2015</p>
-      </footer>
+               <footer>
+                  <p>Data Visualization CSE 512, Spring 2015</p>
+               </footer>
 
-   </div> <!-- main -->
+            </div>
+         </div>
 
-      <script>
+         <script>
 
-         var m_width = 960;
-         var m_height = 800;
-         var margin = {top: 20, right: 20, bottom: 20, left: 20};
-         var width = m_width - margin.left - margin.right;
-         var height = m_height - margin.top - margin.bottom;
+            function update_sankey(name) {
+               console.log("loading file: "+name);
 
-         var formatNumber = d3.format(",.3f");
-         var format = function(d) { return formatNumber(d); };
-         var color = d3.scale.category20();
-
-         var svg = d3.select("#chart").append("svg")
-         .attr("width", m_width)
-         .attr("height", m_height)
-         .append("g")
-         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-         svg.append("rect")
-         .attr("width", m_width)
-         .attr("height", m_height)
-         .attr("fill", "#f0f0f0");
-
-         //console.log([width, height]);
-
-         var sankey = d3.sankey()
-         .nodeWidth(24)
-         .nodePadding(8)
-         .size([width, height]);
-
-         //var path = sankey.link();
-         var path = d3.svg.diagonal()
-         .source(function(d) {
-            return {
-               "x":d.source.y + d.source.dy,
-               "y":d.source.x + sankey.nodeWidth()/2};
-         })            
-         .target(function(d) {
-            return {
-               "x":d.target.y + d.target.dy,
-               "y":d.target.x + sankey.nodeWidth()/2};
-         })
-         .projection(function(d) { return [d.y, d.x]; });
-
-         function Render() {
-            var radios = document.getElementsByTagName('input');
-            var value
-            for (var i =0; i <radios.length; i++) {
-               if(radios[i].type === "radio" && radios[i].checked) {
-                  value = radios[i].value;
-               }			
-            } 			
-            if (value === "Big XoR") {
                queue()
-               .defer(d3.json, "data/xor_sankey.json")
-               .defer(d3.json, "data/tsne_points.json")
+               .defer(d3.json, name)
                .await(ready);
+
             }
-            else if (value === "Big XoR Untrained") {
-               queue()
-               .defer(d3.json, "data/xor_notrain_sankey.json")
-               .defer(d3.json, "data/tsne_points.json")
-               .await(ready);
-            }
-            else if (value === "Small XoR") {
-               queue()
-               .defer(d3.json, "data/xor_smaller_sankey.json")
-               .defer(d3.json, "data/tsne_points.json")
-               .await(ready);
-            }
-            else if (value === "MNIST") {
-               //alert("MNIST Network");
-               queue()
-               .defer(d3.json, "data/mnist_sankey_v2.json")
-               .defer(d3.json, "data/tsne_points.json")
-               .await(ready);
-            }
-            else {
-            }		
-         }
-         function Reset() {
-            d3.select("link").remove();
-            d3.select("node").remove();
-         }
 
-         //queue()
-         //.defer(d3.json, "data/tsne_sankey.json")
-         //.defer(d3.json, "data/mnist_sankey.json")
-         //.defer(d3.json, "data/mnist_sankey_v2.json")
-         //.defer(d3.json, "data/xor_sankey.json")
-         //.defer(d3.json, "data/xor_notrain_sankey.json")
-         //.defer(d3.json, "data/xor_smaller_sankey.json")
 
-         //.defer(d3.json, "data/tsne_points.json")
-         //.defer(d3.json, "data/energy.json")
-         //.await(ready);
+            $('#xor').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
+            $('#xor_u').click(function(){ update_sankey("data/xor_notrain_sankey.json"); return false; });
+            $('#xor_t').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
+            $('#xor_s').click(function(){ update_sankey("data/xor_smaller_sankey.json"); return false; });
 
-         var mapRange = function(from, to, s) {
-            return to[0] + (s - from[0]) * (to[1] - to[0]) / (from[1] - from[0]);
-         };
+            $('#mnist').click(function(){ update_sankey("data/mnist_sankey_v2.json"); return false; });
+            $('#mnist_s').click(function(){ update_sankey("data/mnist_sankey_v2.json"); return false; });
+            $('#mnist_c').click(function(){ update_sankey("data/mnist_sankey.json"); return false; });
 
-         function ready(error, data_s, net) {
+            $('#robot_h').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
+            $('#robot_h').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
+            $('#robot_s').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
 
-            console.log("nodes: "+data_s.nodes.length)
-            console.log("links: "+data_s.links.length)
-            console.log("meta:  "+data_s.meta.length)
 
-            sankey
-            .nodes(data_s.nodes)
-            .links(data_s.links)
-            .layout(32);
+            var m_width = 960;
+            var m_height = 800;
+            var margin = {top: 20, right: 20, bottom: 20, left: 20};
+            var width = m_width - margin.left - margin.right;
+            var height = m_height - margin.top - margin.bottom;
 
-            // combine additional data into node strutures
-            for (var n=0; n<data_s.nodes.length; n++) {
-               data_s.nodes[n].size = data_s.meta[n].size;
-               if (data_s.meta[n].pos.length == 1) {
-                  data_s.nodes[n].pos = [];
-                  data_s.nodes[n].pos.push(mapRange([-1, 1], [0, height], data_s.meta[n].pos[0]));
+            var formatNumber = d3.format(",.3f");
+            var format = function(d) { return formatNumber(d); };
+            var color = d3.scale.category20();
 
-                  console.log("before: "+data_s.meta[n].pos[0]+"mapped: " +data_s.nodes[n].pos[0]);
-                  } else {
-                  data_s.nodes[n].pos = data_s.meta[n].pos;
+            //console.log([width, height]);
+
+            var sankey = d3.sankey()
+            .nodeWidth(24)
+            .nodePadding(8)
+            .size([width, height]);
+
+            //var path = sankey.link();
+            function Render() {
+               var radios = document.getElementsByTagName('input');
+               var value
+               for (var i =0; i <radios.length; i++) {
+                  if(radios[i].type === "radio" && radios[i].checked) {
+                     value = radios[i].value;
+                  }			
+               } 			
+               if (value === "Big XoR") {
+                  queue()
+                  .defer(d3.json, "data/xor_sankey.json")
+                  .await(ready);
                }
+               else if (value === "Big XoR Untrained") {
+                  queue()
+                  .defer(d3.json, "data/xor_notrain_sankey.json")
+                  .await(ready);
+               }
+               else if (value === "Small XoR") {
+                  queue()
+                  .defer(d3.json, "data/xor_smaller_sankey.json")
+                  .await(ready);
+               }
+               else if (value === "MNIST") {
+                  //alert("MNIST Network");
+                  queue()
+                  .defer(d3.json, "data/mnist_sankey_v2.json")
+                  .await(ready);
+               }
+               else {
+               }		
             }
-            //console.log(data_s.nodes);
-
-            //console.log(sankey)
-            // TODO these options should probably be in the json files or
-            // somehow set to change depending on which network is currently visualized
-            var n_scale = data_s.opt.node_scale;
-            var l_scale = data_s.opt.link_scale;
-            var l_opcty = data_s.opt.link_opcty;
-            console.log(l_scale + " :: " + l_opcty);
-
-            var link = svg.append("g").selectAll(".link")
-            .data(data_s.links)
-            .enter().append("path")
-            .attr("class", "link")
-            .attr("d", path)
-            .style("stroke-width", function(d) { return Math.max(1, l_scale*d.value); })
-            .sort(function(a, b) { return b.dy - a.dy; })
-            .style("opacity", function(d) { return Math.min(0.5, d.value/l_opcty); });
-
-            link.append("title")
-            .text(function(d) {
-               return d.source.name+" → "+d.target.name+"\n"
-               +format(d.v1)+" → "+format(d.v2)+"\n"
-               +format(d.value)+"\n"+format(d.dy);
-            });
-
-            var node = svg.append("g").selectAll(".node")
-            .data(data_s.nodes)
-            .enter().append("g")
-            .attr("class", "node")
-            .attr("transform", function(d) {
-               return "translate(" + d.x + "," + d.y + ")";
-            })
-            .call(d3.behavior.drag()
-            .origin(function(d) { return d; })
-            .on("dragstart", function() { this.parentNode.appendChild(this); })
-            .on("drag", dragmove));
-
-            // rectangular sankey nodes
-            /*
-            node.append("rect")
-            .attr("height", function(d) { return d.dy; })
-            .attr("width", sankey.nodeWidth())
-            .style("fill", function(d) {  })
-            .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
-            .append("title")
-            .text(function(d) { return d.name + "\n" + format(d.value); });
-            */
-
-            //////////////////////////////////////////////
-            // circular sankey nodes
-            // size is weights of neurons; get min and max and scale between
-            var node_max = d3.max(data_s.meta, function(d) {return d.size;});
-            var node_min = d3.min(data_s.meta, function(d) {return d.size;});
-            console.log("min max " + node_min+" "+node_max);
-
-            node.append("circle")
-            .attr("cx", sankey.nodeWidth()/2)
-            .attr("cy", function (d) { 
-               //console.log(d.pos[0]+" : "+d.dy);
-               return d.dy;
-            })
-            .attr("r", function (d) { 
-               //console.log("size: "+d.size+" dy: "+d.dy);
-               //return Math.sqrt(d.size*100);
-               return mapRange([node_min, node_max], [5, 20], d.size);
-               //return Math.sqrt(d.dy);
-            })
-            .style("opacity", 0.6)
-            .append("title")
-            .text(function(d) { return d.name + "\n"
-               + "Val: "+format(d.value)+ "\n"
-               + "L: "+d.layer+ "\n"
-               + format(d.dy) + "\n"
-               + format(d.size); });
-
-            node.append("text")
-            .attr("x", -6)
-            .attr("y", function(d) { return d.dy; })
-            .attr("dy", ".35em")
-            .attr("text-anchor", "end")
-            .attr("transform", null)
-            .text(function(d) { return d.name; })
-            .filter(function(d) { return d.x < width / 2; })
-            .attr("x", 6 + sankey.nodeWidth())
-            .attr("text-anchor", "start");
-
-            // TODO don't allow drag and drop??
-            function dragmove(d) {
-               d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
-               //d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.pos[0], d3.event.y)) ) + ")");
-               sankey.relayout();
-               link.attr("d", path);
+            function Reset() {
+               d3.select("link").remove();
+               d3.select("node").remove();
             }
 
-            // small multiples below
-            // Nest data by symbol.
-            console.log("network: "+net.network.length);
+            //queue()
+            //.defer(d3.json, "data/tsne_sankey.json")
+            //.defer(d3.json, "data/mnist_sankey.json")
+            //.defer(d3.json, "data/mnist_sankey_v2.json")
+            //.defer(d3.json, "data/xor_sankey.json")
+            //.defer(d3.json, "data/xor_notrain_sankey.json")
+            //.defer(d3.json, "data/xor_smaller_sankey.json")
 
-            var neurons = d3.nest()
-            .key(function(d) { return d.layer; })
-            .key(function(d) { return d.neuron; })
-            .entries(net.network);
-         }
+            //.defer(d3.json, "data/tsne_points.json")
+            //.defer(d3.json, "data/energy.json")
+            //.await(ready);
 
-      </script>
+            var mapRange = function(from, to, s) {
+               return to[0] + (s - from[0]) * (to[1] - to[0]) / (from[1] - from[0]);
+            };
 
-   </body>
-</head>
+            var svg = d3.select("#chart").append("svg")
+            .attr("width", m_width)
+            .attr("height", m_height)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+
+            function ready(error, data_s) {
+
+               console.log("nodes: "+data_s.nodes.length)
+               console.log("links: "+data_s.links.length)
+               console.log("meta:  "+data_s.meta.length)
+
+               sankey
+               .nodes(data_s.nodes)
+               .links(data_s.links)
+               .layout(32);
+
+               // combine additional data into node strutures
+               for (var n=0; n<data_s.nodes.length; n++) {
+                  data_s.nodes[n].size = data_s.meta[n].size;
+                  if (data_s.meta[n].pos.length == 1) {
+                     data_s.nodes[n].pos = [];
+                     data_s.nodes[n].pos.push(mapRange([-1, 1], [0, height], data_s.meta[n].pos[0]));
+
+                     console.log("before: "+data_s.meta[n].pos[0]+"mapped: " +data_s.nodes[n].pos[0]);
+                     } else {
+                     data_s.nodes[n].pos = data_s.meta[n].pos;
+                  }
+               }
+               //console.log(data_s.nodes);
+
+               //console.log(sankey)
+               // TODO these options should probably be in the json files or
+               // somehow set to change depending on which network is currently visualized
+               var n_scale = data_s.opt.node_scale;
+               var l_scale = data_s.opt.link_scale;
+               var l_opcty = data_s.opt.link_opcty;
+               console.log(l_scale + " :: " + l_opcty);
+
+               svg.append("rect")
+               .attr("width", m_width)
+               .attr("height", m_height)
+               .attr("fill", "#f0f0f0");
+
+
+               var path = d3.svg.diagonal()
+               .source(function(d) {
+                  return {
+                     "x":d.source.y + d.source.dy,
+                     "y":d.source.x + sankey.nodeWidth()/2};
+               })            
+               .target(function(d) {
+                  return {
+                     "x":d.target.y + d.target.dy,
+                     "y":d.target.x + sankey.nodeWidth()/2};
+               })
+               .projection(function(d) { return [d.y, d.x]; });
+
+
+               var link = svg.append("g").selectAll(".link")
+               .data(data_s.links)
+               .enter().append("path")
+               .attr("class", "link")
+               .attr("d", path)
+               .style("stroke-width", function(d) { return Math.max(1, l_scale*d.value); })
+               .sort(function(a, b) { return b.dy - a.dy; })
+               .style("opacity", function(d) { return Math.min(0.5, d.value/l_opcty); });
+
+               link.append("title")
+               .text(function(d) {
+                  return d.source.name+" → "+d.target.name+"\n"
+                  +format(d.v1)+" → "+format(d.v2)+"\n"
+                  +format(d.value)+"\n"+format(d.dy);
+               });
+
+               var node = svg.append("g").selectAll(".node")
+               .data(data_s.nodes)
+               .enter().append("g")
+               .attr("class", "node")
+               .attr("transform", function(d) {
+                  return "translate(" + d.x + "," + d.y + ")";
+               })
+               .call(d3.behavior.drag()
+               .origin(function(d) { return d; })
+               .on("dragstart", function() { this.parentNode.appendChild(this); })
+               .on("drag", dragmove));
+
+               // rectangular sankey nodes
+               /*
+               node.append("rect")
+               .attr("height", function(d) { return d.dy; })
+               .attr("width", sankey.nodeWidth())
+               .style("fill", function(d) {  })
+               .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
+               .append("title")
+               .text(function(d) { return d.name + "\n" + format(d.value); });
+               */
+
+               //////////////////////////////////////////////
+               // circular sankey nodes
+               // size is weights of neurons; get min and max and scale between
+               var node_max = d3.max(data_s.meta, function(d) {return d.size;});
+               var node_min = d3.min(data_s.meta, function(d) {return d.size;});
+               console.log("min max " + node_min+" "+node_max);
+
+               node.append("circle")
+               .attr("cx", sankey.nodeWidth()/2)
+               .attr("cy", function (d) { 
+                  //console.log(d.pos[0]+" : "+d.dy);
+                  return d.dy;
+               })
+               .attr("r", function (d) { 
+                  //console.log("size: "+d.size+" dy: "+d.dy);
+                  //return Math.sqrt(d.size*100);
+                  return mapRange([node_min, node_max], [5, 20], d.size);
+                  //return Math.sqrt(d.dy);
+               })
+               .style("opacity", 0.6)
+               .append("title")
+               .text(function(d) { return d.name + "\n"
+                  + "Val: "+format(d.value)+ "\n"
+                  + "L: "+d.layer+ "\n"
+                  + format(d.dy) + "\n"
+                  + format(d.size); });
+
+               node.append("text")
+               .attr("x", -6)
+               .attr("y", function(d) { return d.dy; })
+               .attr("dy", ".35em")
+               .attr("text-anchor", "end")
+               .attr("transform", null)
+               .text(function(d) { return d.name; })
+               .filter(function(d) { return d.x < width / 2; })
+               .attr("x", 6 + sankey.nodeWidth())
+               .attr("text-anchor", "start");
+
+               // TODO don't allow drag and drop??
+               function dragmove(d) {
+                  d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
+                  //d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.pos[0], d3.event.y)) ) + ")");
+                  sankey.relayout();
+                  link.attr("d", path);
+               }
+
+               // small multiples below
+               // Nest data by symbol.
+               //console.log("network: "+net.network.length);
+
+               /*
+               var neurons = d3.nest()
+               .key(function(d) { return d.layer; })
+               .key(function(d) { return d.neuron; })
+               .entries(net.network);
+               */
+            }
+
+         </script>
+
+      </body>
+   </head>

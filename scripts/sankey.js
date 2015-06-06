@@ -102,6 +102,7 @@ d3.sankey = function() {
          if (typeof source === "number") source = link.source = nodes[link.source];
          if (typeof target === "number") target = link.target = nodes[link.target];
          source.sourceLinks.push(link);
+         console.log(i+" :: "+link.idx);
          target.targetLinks.push(link);
       });
    }
