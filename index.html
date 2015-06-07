@@ -79,7 +79,7 @@
                <nav id="nav">
                   <ul>
                      <li>
-                        <a id="xor" href="#">XOR</a>
+                        <a id="xor" href="#">XOR Network</a>
                         <ul>
                            <li><a id="xor_u" href="#">Big XOR Untrained</a></li>
                            <li><a id="xor_t" href="#">Big XOR Trained</a></li>
@@ -87,14 +87,14 @@
                         </ul>
                      </li>
                      <li>
-                        <a id="mnist" href="#">MNIST</a>
+                        <a id="mnist" href="#">MNIST_network</a>
                         <ul>
                            <li><a id="mnist_s" href="#">Big MNIST</a></li>
                            <li><a id="mnist_c" href="#">Convolutional</a></li>
                         </ul>
                      </li>
                      <li>
-                        <a id="robot" href="#">Robotics Control</a>
+                        <a id="robot" href="#">Robotics Policy Network</a>
                         <ul>
                            <li><a id="robot_h" href="#">Humanoid</a></li>
                            <li><a id="robot_s" href="#">Spider</a></li>
@@ -125,6 +125,7 @@
 
          <div class="wrapper">
             <div class="container">
+               <!--
                <form>
                   <input type = "radio" value = "Big XoR" name = "Network" id = "BigXoRNet" checked> Big XoR NetWork
                   <input type = "radio" value = "Big XoR Untrained" name = "Network" id = "UnXoRNet" > Untrained XoR NetWork
@@ -132,12 +133,13 @@
                   <input type = "radio" value = "MNIST" name = "Network" id = "MNISTNet"> MNIST Network
                   <input type = "radio" value = "Robotic" name = "NetWork" id = "RoboNet"> Robotic Network
                </form>
+               -->
                <div class="row 150%">
                   <div class="8u 12u(narrower)">
                      <!-- Content -->
                      <article id="content">
                         <header>
-                           <h2>Network Name</h2>
+                           <h2 id="network_title">Network Name</h2>
                         </header>
                         <p id="chart"></p>
                      </article>
@@ -166,46 +168,63 @@
                      </section>
                   </div>
                </div>
-
+               <!--
                <div>
                   <button onclick = "Render()"> Display </button>
                   <button onclick = "Reset()"> Clear </button>
                </div>
-
-
+               -->
                <p>The fully automatic layout is convenient for rapid visualization—positioning nodes manually is tedious! However, the algorithm is not perfect; links are drawn with partial transparency to highlight crossings. To improve readability and further disambiguate links, this example also lets you reposition nodes interactively. The algorithm could be improved in the future, say to minimize link crossing or to support loopback in cyclical networks.</p>
 
                <footer>
                   <p>Data Visualization CSE 512, Spring 2015</p>
                </footer>
-
             </div>
          </div>
 
          <script>
+            var filename_arr=[], title_arr=[];
 
-            function update_sankey(name) {
-               console.log("loading file: "+name);
+            filename_arr.push("data/xor_sankey.json"); // 0
+            title_arr.push("Trained XOR Network");
+            filename_arr.push("data/xor_notrain_sankey.json"); // 1
+            title_arr.push("Untrained XOR Network");
+            filename_arr.push("data/xor_smaller_sankey.json"); // 2
+            title_arr.push("Minimized Xor Network");
 
+            filename_arr.push("data/mnist_sankey_v2.json"); // 3
+            title_arr.push("MNIST Network");
+            //filename_arr.push("data/mnist_sankey_v2.json");
+            //title_arr.push("MNIST Network");
+            filename_arr.push("data/mnist_sankey.json"); //4
+            title_arr.push("MNIST Convolutional Network???");
+
+            filename_arr.push("data/humanoid.json"); // 5
+            title_arr.push("Humanoid Robot Control Network");
+            filename_arr.push("data/xor_sankey.json"); // 6
+            title_arr.push("Spider Robot Control Network");
+
+            function update_sankey(index) {
+               console.log("loading file: "+filename_arr[index]);
                queue()
-               .defer(d3.json, name)
+               .defer(d3.json, filename_arr[index])
                .await(ready);
 
+               $('#network_title').html(title_arr[index]);
             }
 
+            $('#xor').click(function(){ update_sankey(0); return false; });
+            $('#xor_u').click(function(){ update_sankey(1); return false; });
+            $('#xor_t').click(function(){ update_sankey(0); return false; });
+            $('#xor_s').click(function(){ update_sankey(2); return false; });
 
-            $('#xor').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
-            $('#xor_u').click(function(){ update_sankey("data/xor_notrain_sankey.json"); return false; });
-            $('#xor_t').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
-            $('#xor_s').click(function(){ update_sankey("data/xor_smaller_sankey.json"); return false; });
+            $('#mnist').click(function(){ update_sankey(3); return false; });
+            $('#mnist_s').click(function(){ update_sankey(3); return false; });
+            $('#mnist_c').click(function(){ update_sankey(4); return false; });
 
-            $('#mnist').click(function(){ update_sankey("data/mnist_sankey_v2.json"); return false; });
-            $('#mnist_s').click(function(){ update_sankey("data/mnist_sankey_v2.json"); return false; });
-            $('#mnist_c').click(function(){ update_sankey("data/mnist_sankey.json"); return false; });
-
-            $('#robot_h').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
-            $('#robot_h').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
-            $('#robot_s').click(function(){ update_sankey("data/xor_sankey.json"); return false; });
+            $('#robot').click(function(){ update_sankey(5); return false; });
+            $('#robot_h').click(function(){ update_sankey(5); return false; });
+            $('#robot_s').click(function(){ update_sankey(6); return false; });
 
 
             var m_width = 960;
@@ -226,6 +245,7 @@
             .size([width, height]);
 
             //var path = sankey.link();
+            <!--
             function Render() {
                var radios = document.getElementsByTagName('input');
                var value
@@ -262,6 +282,7 @@
                d3.select("link").remove();
                d3.select("node").remove();
             }
+            -->
 
             //queue()
             //.defer(d3.json, "data/tsne_sankey.json")
@@ -279,14 +300,23 @@
                return to[0] + (s - from[0]) * (to[1] - to[0]) / (from[1] - from[0]);
             };
 
-            var svg = d3.select("#chart").append("svg")
+ var svg = d3.select("#chart").append("svg")
             .attr("width", m_width)
             .attr("height", m_height)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-
+           
             function ready(error, data_s) {
+               d3.select("svg")
+               .remove();
+
+var svg = d3.select("#chart").append("svg")
+            .attr("width", m_width)
+            .attr("height", m_height)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
 
                console.log("nodes: "+data_s.nodes.length)
                console.log("links: "+data_s.links.length)
