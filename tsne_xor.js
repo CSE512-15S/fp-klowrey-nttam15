@@ -12,25 +12,27 @@ var layer_defs = [];
 layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:3});
 // some fully connected layers
 layer_defs.push({type:'fc', num_neurons:8, activation:'relu'});
+//layer_defs.push({type:'fc', num_neurons:8, activation:'relu'});
 //layer_defs.push({type:'fc', num_neurons:3, activation:'sigmoid'});
 //layer_defs.push({type:'fc', num_neurons:20, activation:'relu'});
 // a softmax classifier predicting probabilities for two classes: 0,1
 
 if (output_type == 'softmax') {
-layer_defs.push({type:'softmax', num_classes:2});
+   layer_defs.push({type:'softmax', num_classes:2});
 }
 else {
-layer_defs.push({type:'regression', num_neurons:1});
+   layer_defs.push({type:'regression', num_neurons:1});
 }
 
 var small_l = []
 small_l.push({type:'input', out_sx:1, out_sy:1, out_depth:3});
-small_l.push({type:'fc', num_neurons:4, activation:'relu'});
+small_l.push({type:'fc', num_neurons:6, activation:'relu'});
+small_l.push({type:'fc', num_neurons:3, activation:'relu'});
 if (output_type == 'softmax') {
-small_l.push({type:'softmax', num_classes:2});
+   small_l.push({type:'softmax', num_classes:2});
 }
 else {
-small_l.push({type:'regression', num_neurons:1});
+   small_l.push({type:'regression', num_neurons:1});
 }
 
 // make network from layers above
@@ -67,21 +69,21 @@ if (output_type == 'softmax') {
 data.push([0.0, 0.0, 0.0]); labels.push(0);
 data.push([0.0, 1.0, 0.0]); labels.push(1);
 data.push([1.0, 0.0, 0.0]); labels.push(1);
-data.push([1.0, 1.0, 0.0]); labels.push(1);
+data.push([1.0, 1.0, 0.0]); labels.push(0);
 data.push([0.0, 0.0, 1.0]); labels.push(1);
-data.push([0.0, 1.0, 1.0]); labels.push(1);
-data.push([1.0, 0.0, 1.0]); labels.push(1);
-data.push([1.0, 1.0, 1.0]); labels.push(0);
+data.push([0.0, 1.0, 1.0]); labels.push(0);
+data.push([1.0, 0.0, 1.0]); labels.push(0);
+data.push([1.0, 1.0, 1.0]); labels.push(1);
 }
 else{
 data.push([0.0, 0.0, 0.0]); labels.push([0]);
 data.push([0.0, 1.0, 0.0]); labels.push([1]);
 data.push([1.0, 0.0, 0.0]); labels.push([1]);
-data.push([1.0, 1.0, 0.0]); labels.push([1]);
+data.push([1.0, 1.0, 0.0]); labels.push([0]);
 data.push([0.0, 0.0, 1.0]); labels.push([1]);
-data.push([0.0, 1.0, 1.0]); labels.push([1]);
-data.push([1.0, 0.0, 1.0]); labels.push([1]);
-data.push([1.0, 1.0, 1.0]); labels.push([0]);
+data.push([0.0, 1.0, 1.0]); labels.push([0]);
+data.push([1.0, 0.0, 1.0]); labels.push([0]);
+data.push([1.0, 1.0, 1.0]); labels.push([1]);
 }
 
 // classfication needs class number,
@@ -137,9 +139,11 @@ function bad_train_network(train, d, l, iter) {
 
    console.log('loss = ' + avloss + ', 100 cycles through data in ' + time + 'ms');
 }
-train_network(trainer, data, labels, 4000);
-bad_train_network(notrainer, data, 4000);
-train_network(strainer,data, labels, 4000);
+
+var iter = 4000;
+train_network(trainer, data, labels, iter);
+bad_train_network(notrainer, data, iter);
+train_network(strainer,data, labels, iter);
 
 console.log("\nBig Trained");
 for(var ix=0;ix<N;ix++) {
@@ -314,9 +318,14 @@ function sandwich_in_out(network, data) {
    // NORMALIZE the tsne outputs
 }
 
-points = helper.normalizeByLayers(net, points);
-notrain= helper.normalizeByLayers(no_train,notrain);
-smaller= helper.normalizeByLayers(s_net,smaller);
+
+l_points = helper.normalizeBetweenLayers(net, points, -1);
+l_notrain= helper.normalizeBetweenLayers(no_train,notrain, -1);
+l_smaller= helper.normalizeBetweenLayers(s_net,smaller, -1);
+
+points = helper.normalizeByLayers(net, points, 0, 4);
+notrain= helper.normalizeByLayers(no_train,notrain, 0, 4);
+smaller= helper.normalizeByLayers(s_net,smaller, 0, 4);
 
 
 console.log("TSNE normalized");
@@ -371,10 +380,14 @@ function data_to_rawtsne(network, filename) {
 
 ////////// write out json file of data for sankey
 
-var net_opt ={"name":'xor_net', 'node_scale':10, 'link_scale':20, 'link_opcty':2}
+var net_opt ={"name":'xor_net', 'node_scale':10, 'link_scale':20, 'link_opcty':2,
+    'nodeWidth':24,
+    'nodePadding':0};
 var collapse_input = false;
-helper.dataToSankey(net, points, net_opt,'data/xor_sankey.json', collapse_input);
-helper.dataToSankey(no_train,notrain, net_opt,'data/xor_notrain_sankey.json', collapse_input);
-helper.dataToSankey(s_net,smaller, net_opt,'data/xor_smaller_sankey.json', collapse_input);
+var slim_thresh = 0.0;
+console.log("links: "+l_points.length);
+helper.dataToSankey(net, points, l_points, net_opt,'data/xor_sankey.json', collapse_input, slim_thresh);
+helper.dataToSankey(no_train,notrain, l_notrain, net_opt,'data/xor_notrain_sankey.json', collapse_input, slim_thresh);
+helper.dataToSankey(s_net,smaller, l_smaller, net_opt,'data/xor_smaller_sankey.json', collapse_input, slim_thresh);
 
 

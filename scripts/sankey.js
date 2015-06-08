@@ -102,7 +102,7 @@ d3.sankey = function() {
          if (typeof source === "number") source = link.source = nodes[link.source];
          if (typeof target === "number") target = link.target = nodes[link.target];
          source.sourceLinks.push(link);
-         console.log(i+" :: "+link.idx);
+         //console.log(i+" :: "+link.idx);
          target.targetLinks.push(link);
       });
    }
@@ -127,29 +127,44 @@ d3.sankey = function() {
       var remainingNodes = nodes,
       nextNodes,
       x = 0;
+      var kx = (width - nodeWidth) / (x - 1);
+
+      /*
+      remainingNodes.forEach(function(node) {
+      node.x = node.col*kx;
+      console.log("X: "+node.x+" " +node.col);
+      });
+      */
 
       while (remainingNodes.length) {
          nextNodes = [];
+         var max = 0;
          remainingNodes.forEach(function(node) {
-            node.x = x;
+            if (max < node.col) { max = node.col; }
+         });
+         remainingNodes.forEach(function(node) {
+            //node.x = x;
+            node.x = ((node.col/max) * width); // + (nodeWidth / 2.0);
             node.dx = nodeWidth;
             node.sourceLinks.forEach(function(link) {
                nextNodes.push(link.target);
             });
          });
+         console.log("remaining: "+remainingNodes.length+" next: "+nextNodes.length);
          remainingNodes = nextNodes;
          ++x;
       }
 
       //
-      moveSinksRight(x);
-      scaleNodeBreadths((width - nodeWidth) / (x - 1));
+      //moveSinksRight(x);
+      //scaleNodeBreadths(width);
    }
 
    function moveSourcesRight() {
       nodes.forEach(function(node) {
          if (!node.targetLinks.length) {
             node.x = d3.min(node.sourceLinks, function(d) { return d.target.x; }) - 1;
+            //node.x = node.col;
          }
       });
    }
@@ -189,14 +204,16 @@ d3.sankey = function() {
       function initializeNodeDepth() {
          // Instead of initializing and fixing collisions
          // we can just assign the space based on their values
-         var ky = d3.min(nodesByBreadth, function(nodes) {
-            return (height - (nodes.length - 1) * nodePadding) / d3.sum(nodes, value);
-         });
+         //var ky = d3.min(nodesByBreadth, function(nodes) {
+         //   return (height - (nodes.length - 1) * nodePadding) / d3.sum(nodes, value);
+         //});
 
          nodesByBreadth.forEach(function(nodes) {
+               console.log(height);
             nodes.forEach(function(node, i) {
                node.y = i;
-               node.dy = node.value * height;
+               node.dy = (node.value * height) + (nodePadding/2.0);
+               console.log("y: "+node.y+" dy: "+node.dy+" val: "+node.value);
             });
          });
 

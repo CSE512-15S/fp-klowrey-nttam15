@@ -43,3 +43,4 @@ List of which networks are available with text blurb as description
 
 onlick for css effects
 
+python script for gathering robot neural network data, and writing to matlab file for tsne processing
