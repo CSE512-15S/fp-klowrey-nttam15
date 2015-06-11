@@ -2009,10 +2009,10 @@ button:hover,
    position: relative;
    padding: 4em 0 2em 0;
    background-image: url("images/header.svg");
-   background-image: url("images/overlay.png"), url("images/header.svg"), -moz-linear-gradient(75deg, #FF7088 15%, #F2B69D 55%);
-   background-image: url("images/overlay.png"), url("images/header.svg"), -webkit-linear-gradient(75deg, #FF7088 15%, #F2B69D 55%);
-   background-image: url("images/overlay.png"), url("images/header.svg"), -ms-linear-gradient(75deg, #FF7088 15%, #F2B69D 55%);
-   background-image: url("images/overlay.png"), url("images/header.svg"), linear-gradient(75deg, #FF7088 15%, #F2B69D 55%);
+   background-image: url("images/overlay.png"), url("images/header.svg"), -moz-linear-gradient(75deg, #F59656 15%, #FACEA1 55%);
+   background-image: url("images/overlay.png"), url("images/header.svg"), -webkit-linear-gradient(75deg, #F59656 15%, #FACEA1 55%);
+   background-image: url("images/overlay.png"), url("images/header.svg"), -ms-linear-gradient(75deg, #F59656 15%, #FACEA1 55%);
+   background-image: url("images/overlay.png"), url("images/header.svg"), linear-gradient(75deg, #F59656 15%, #FACEA1 55%);
    background-color: #f08c89;
    background-size: 100% 620%;
    background-size: 128px 128px, 100% 620%, auto;

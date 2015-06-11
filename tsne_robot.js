@@ -20,7 +20,6 @@ else {
 
 net.makeLayers(layer_defs);
 
-var trainer = new convnetjs.Trainer(net, {method: 'adadelta', batch_size:10, l2_decay:0.001});
 
 // forward prop the data
 
@@ -38,37 +37,33 @@ var trainer = new convnetjs.Trainer(net, {method: 'adadelta', batch_size:10, l2_
 //var from_file = require('./matlab/simple_mnist.json'); //tsne data from matlab
 var helperjs = require('./helper.js');
 var helper = new helperjs.helper();
+
 var from_file = require('./robot/humanoid_points.json'); //tsne data from python 
-//var from_file = require('./robot/biped_all_points.json'); //tsne data from python 
+
 var points = from_file.points
 console.log("Points: "+points.length);
 console.log(points[points.length-20]);
 
 // NORMALIZE the tsne outputs
-//console.log(points);
 console.log("Normalizing by layers");
 links = helper.normalizeBetweenLayers(net, points, 0, 8);
 console.log("LINK LENGTH: "+links.length);
 n_points = helper.normalizeByLayers(net, points, 0, 8);
 
 
-//for (var l=0; l<(layers-1); l++) {
-//   var L = net.layers[l];
-//   console.log("Layer "+l+": "+L.layer_type);
-//}
-////////// write out json file of data for sankey
-
 var net_opt ={'name':'humanoid',
-    'node_scale':10,
+    'node_scale':1,
     'link_scale':4,
-    'link_opcty':64,
+    'link_opcty':32,
     'nodeWidth':40,
     'nodePadding':0};
 
 var collapse_input = -1;
-var slim_thresh = 0.95;
+var slim_thresh = 0.98;
+net_opt.name = 'walker';
 helper.dataToSankey(net, n_points, links, net_opt, 'data/humanoid.json', collapse_input, slim_thresh);
 
-//var slim_thresh = 0.8;
+//var slim_thresh = 0.98;
+//net_opt.name = 'runner';
 //helper.dataToSankey(net, n_points, links, net_opt, 'data/biped_all.json', collapse_input, slim_thresh);
 

@@ -8,14 +8,9 @@ var output_type = 'regression'
 
 // make layers
 var layer_defs = [];
-// input layer of size 1x1x2 (all volumes are 3D)
 layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:3});
-// some fully connected layers
-layer_defs.push({type:'fc', num_neurons:8, activation:'relu'});
-//layer_defs.push({type:'fc', num_neurons:8, activation:'relu'});
-//layer_defs.push({type:'fc', num_neurons:3, activation:'sigmoid'});
-//layer_defs.push({type:'fc', num_neurons:20, activation:'relu'});
-// a softmax classifier predicting probabilities for two classes: 0,1
+layer_defs.push({type:'fc', num_neurons:12, activation:'relu'});
+layer_defs.push({type:'fc', num_neurons:12, activation:'relu'});
 
 if (output_type == 'softmax') {
    layer_defs.push({type:'softmax', num_classes:2});
@@ -27,7 +22,7 @@ else {
 var small_l = []
 small_l.push({type:'input', out_sx:1, out_sy:1, out_depth:3});
 small_l.push({type:'fc', num_neurons:6, activation:'relu'});
-small_l.push({type:'fc', num_neurons:3, activation:'relu'});
+small_l.push({type:'fc', num_neurons:5, activation:'relu'});
 if (output_type == 'softmax') {
    small_l.push({type:'softmax', num_classes:2});
 }
@@ -44,8 +39,6 @@ net.makeLayers(layer_defs);
 no_train.makeLayers(layer_defs);
 s_net.makeLayers(small_l);
 
-//var trainer = new convnetjs.SGDTrainer(net, 
-//              {learning_rate:0.2, momentum:0.0, batch_size:10, l2_decay:0.001});
 var trainer = new convnetjs.Trainer(net, 
               {method: 'adadelta', batch_size:10, l2_decay:0.001});
 var notrainer = new convnetjs.Trainer(no_train, 
@@ -86,22 +79,12 @@ data.push([1.0, 0.0, 1.0]); labels.push([0]);
 data.push([1.0, 1.0, 1.0]); labels.push([1]);
 }
 
-// classfication needs class number,
-
-// regression needs list of values
-//labels = [];
-//labels.push([0]);
-//labels.push([1]);
-//labels.push([1]);
-//labels.push([0]);
 var N = data.length;
 
 var x = new convnetjs.Vol(1,1,2);
 
 function train_network(train, d, l, iter) {
    var start = new Date().getTime();
-   // 1 x 1, with a depth of 2 ( vector length 2 )
-   //x.w = d[ix];
    var avloss = 0.0;
    for(var iters=0;iters<iter;iters++) {
       for(var ix=0;ix<N;ix++) {
@@ -121,13 +104,10 @@ function train_network(train, d, l, iter) {
 
 function bad_train_network(train, d, l, iter) {
    var start = new Date().getTime();
-   // 1 x 1, with a depth of 2 ( vector length 2 )
-   //x.w = d[ix];
    var avloss = 0.0;
    for(var iters=0;iters<iter;iters++) {
       for(var ix=0;ix<N;ix++) {
          x.w = d[ix];
-         //var stats = train.train(x, Math.round(Math.random()));
          var stats = train.train(x, Math.round(Math.random()));
          avloss += stats.loss;
       }
@@ -163,10 +143,9 @@ for(var ix=0;ix<N;ix++) {
    var predicted_values = s_net.forward(x);
    console.log('in: ' + data[ix]+' goal: '+labels[ix]+' out: '+predicted_values.w[0]+' '+predicted_values.w[1]);
 }
-//save_net_to_json(net, 'trained_network.json');
 
 var test_data = [];
-for (var i=0; i<26; i++) {
+for (var i=0; i<4; i++) {
    var idx = Math.floor(Math.random() * data.length);
    test_data.push(data[idx]);
 }
@@ -181,10 +160,8 @@ function layer_data(network, act) {
    for (var l=1; l<(layers-1); l++) {
       var L = network.layers[l];
       if (L.layer_type != "fc" && L.layer_type != "conv") {
-         //console.log("layer "+l);
          var neurons = network.layers[l].out_act.w.length;
          for (var nw=0; nw<neurons; nw++) {
-            //console.log("\tweight "+nw);
             weight = network.layers[l].out_act.w[nw];
             act[count].push(weight);
             count = count+1;
@@ -217,14 +194,8 @@ function get_coactivation_data(network, test_d) {
          x.w = test_d[ix];
          var predicted_values = network.forward(x);
          // then get each layer of data
-         //for (var l=0; l<(layers); l++) {
-         //console.log('Getting activations for layer '+l+'\'s neurons');
          layer_data(network, activations);
-      //}
-      //console.log('in: ' + data[ix]+' goal: '+labels[ix]+' out: '+predicted_values.w[0]+' '+predicted_values.w[1]);
    }
-   //console.log('\t\t'+num_weights+' weights for '+N+' inputs');
-   //console.log(activations);
    return activations;
 }
 
@@ -279,9 +250,8 @@ function get_tsne(options, data, iters) {
 
 console.log("TSNE input:");
 console.log(tsne_data.length+" by "+tsne_data[0].length +" test inputs");
-//console.log(tsne_data);
 console.log("TSNE Output:");
-var points = get_tsne(opt, tsne_data, 500);
+var points = get_tsne(opt, tsne_data, 1000);
 var notrain= get_tsne(opt, raw_data, 500);
 var smaller= get_tsne(opt, small_tsne, 500);
 
@@ -323,9 +293,9 @@ l_points = helper.normalizeBetweenLayers(net, points, -1);
 l_notrain= helper.normalizeBetweenLayers(no_train,notrain, -1);
 l_smaller= helper.normalizeBetweenLayers(s_net,smaller, -1);
 
-points = helper.normalizeByLayers(net, points, 0, 4);
-notrain= helper.normalizeByLayers(no_train,notrain, 0, 4);
-smaller= helper.normalizeByLayers(s_net,smaller, 0, 4);
+points = helper.normalizeByLayers(net, points, 0, 7);
+notrain= helper.normalizeByLayers(no_train,notrain, 0, 7);
+smaller= helper.normalizeByLayers(s_net,smaller, 0, 7);
 
 
 console.log("TSNE normalized");
@@ -334,19 +304,6 @@ console.log("TSNE normalized");
 console.log(notrain);
 console.log("TSNE normalized");
 console.log(smaller);
-
-
-//console.log("TSNE untrained");
-//console.log(get_tsne(opt, raw_data, 500));
-
-/*
-tsne.initDataDist(tsne_data);
-for(var k = 0; k < 500; k++) {
-   tsne.step(); // every time you call this, solution gets better
-}
-
-*/
-//data_to_rawtsne(net, "data/tsne_points.json");
 
 function data_to_rawtsne(network, filename) {
    var data = {"network":[], "links":[]};

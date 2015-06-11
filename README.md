@@ -1,46 +1,28 @@
-# Neural Network Visualization
+# Neural Network Behavior 
 
-Neural networks are frequently treated as black box function approximators.
+Kendall Lowrey -- klowrey
 
+Tam Nguyen -- nttam15
 
-Current status:
-
-a non-convolutional neural network for mnist was trained and put into index.html (two versions).
-matlab was used for tsne -- pain to get activations data out of the mnist.html run-time...
-
-when using karpathy's stuff, we're ignoring conv and fc layers (just getting post-synaptic activations)
-tsne for the mnist networks only works when excluding the input and output layers from tSNE -- the weights for these are going to be odd. they are added back in with random placements to try to have 'even' distribution in the render'
-doesn't quite make good links to the output layer; need to modify sankey.js to specifically include the last layer, or modify tsne_mnist.js
-
-todo: 
-
-switching between the different networks (so var xor and mnist)
-online training and rendering of a network (xor?)
+Artificial Neural Networks have traditionally been treated as black boxes, both in their development and in their use. We present a method to discover the internal structure of neural networks by visualizing activation properties of the network with respect to input data: co-activations of multiple neurons. Our method combines statistical analysis techniques with a modified Sankey Diagram to show flow of data through neural networks unlike previous visualizations methods. Implications for this technique beyond behavioral and structural visualization include the optimization of an artificial neural network through parameter reduction and further understanding of their processing.
 
 
-# Networks:
-XOR: big trained
+# Training Networks for Data Collection
 
-XOR: big untrained
+The only network we can train simply is the XOR network. We run the tsne_xor.js code with nodejs, which usings some functions from helper.js, scripts/tsne.js, and scripts/convnet-min.js, the last two of which are provided by https://github.com/karpathy
 
-XOR: small 
+The resulting data files ( written to data/xor--.json ) are then read by the index.html front-end and rendered to svg through d3js.
 
+# Paper & Poster
 
-mnist: 64, 32, 32 trained
-
- ? mnist: 64, 32, 32 untrained
-
- ? mnist: conv?
+Are located under the final directory
 
 
-robot:
+# Work breakdown and Research Process
 
-? still getting these 
+Research for this project began with wanting to understand the inner workings of neural networks from a non-math based perspective. This required previous experience with them, as well as other optimization techniques. tSNE cam up as the best way of visualizing the co-activations of neural networks and was research as the best method. 
 
-# TODO
-Layout and UI
-List of which networks are available with text blurb as description
+Additionally, we strove to understand what other methods were used previously in visualizing neural networks and they are presented in our paper contribution. We found that this kind of visualization has, to the best of our knowledge, not been attempted before.
 
-onlick for css effects
+Work consisted of a significant amount of support software beyond just visualization code as we needed to support multiple different neural networks all operating on different data inputs. This required Javascript, Python, and Matlab. 
 
-python script for gathering robot neural network data, and writing to matlab file for tsne processing

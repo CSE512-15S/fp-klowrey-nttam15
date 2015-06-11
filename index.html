@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html class="data_viz">
    <meta charset="utf-8">
@@ -6,10 +5,6 @@
    <title>Lets Visualize some Neural Networks</title>
    <head>
       <link rel="shortcut icon" href="../favicon.ico">
-      <!--
-      <link rel="stylesheet" type="text/css" href="css/default.css" />
-      <link rel="stylesheet" type="text/css" href="css/component.css" />
-      -->
       <link rel="stylesheet" type="text/css" href="css/main.css" />
       <link rel="stylesheet" type="text/css" href="css/normalize.css" />
 
@@ -24,18 +19,12 @@
       <script src="scripts/util.js"></script>
       <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
       <script src="scripts/main.js"></script>
-
    </head>
+
    <style>
-
-      //@import url(css/normalize.css);
-      //@import url(css/main.css);
-      //@import url(css/style.css);
-
       #chart {
          widht: 960px;
          height: 800px;
-         background-color: #f0f0f0;
       }
 
       .node rect {
@@ -47,17 +36,16 @@
       .node circle {
          cursor: move;
          fill-opacity: .9;
-         //shape-rendering: crispEdges;
       }
 
       .node text {
-         pointer-events: none;
-         text-shadow: 0 1px 0 #fff;
+         //pointer-events: none;
+         //text-shadow: 0 1px 0 #fff;
       }
 
       .link {
-         fill: none;
-         stroke: #000;
+         //fill: none;
+         //stroke: #000;
          //stroke-opacity: .2;
       }
 
@@ -67,14 +55,11 @@
 
    </style>
    <body>
-
-      <!--
-		<div class="container">
-         -->
          <div id="header-wrapper">
             <div id="header" class="container">
                <span>CSE 512</span>
-               <h1>Neural Networks: How do they even?</h1>
+               <h1>Neural Network Behavior</h1>
+               <h3>Visualizing Neuron Co-activation to Reveal Structure</h3>
                <!-- Nav -->
                <nav id="nav">
                   <ul>
@@ -90,38 +75,24 @@
                         <a id="mnist" href="#">MNIST_network</a>
                         <ul>
                            <li><a id="mnist_s" href="#">Big MNIST</a></li>
-                           <li><a id="mnist_c" href="#">Convolutional</a></li>
                         </ul>
                      </li>
                      <li>
                         <a id="robot" href="#">Robotics Policy Network</a>
                         <ul>
-                           <li><a id="robot_h" href="#">Humanoid</a></li>
-                           <li><a id="robot_s" href="#">Spider</a></li>
+                           <li><a id="robot_h" href="#">Biped Walker</a></li>
+                           <li><a id="robot_s" href="#">Biped Runner</a></li>
                         </ul>
                      </li>
                      <!--
-                     <li><a href="left-sidebar.html">Left Sidebar</a></li>
-                     <li class="break"><a href="right-sidebar.html">Right Sidebar</a></li>
-                     <li><a href="no-sidebar.html">No Sidebar</a></li>
+                     <li>
+                        <a id="save" href="#">Save Image</a>
+                     </li>
                      -->
                   </ul>
                </nav>
             </div>
          </div>
-
-         <!--
-         <ul class="cbp-vimenu ">
-            <li><a href="#" class="icon-logo">Logo</a></li>
-            <li><a href="#" class="icon-archive">Archive</a></li>
-            <li><a href="#" class="icon-search">Search</a></li>
-            <li><a href="#" class="icon-pencil">Pencil</a></li>
-            <li class="cbp-vicurrent"><a href="#" class="icon-pencil">Pencil</a></li>
-            <li><a href="#" class="icon-location">Location</a></li>
-            <li><a href="#" class="icon-images">Images</a></li>
-            <li><a href="#" class="icon-download">Download</a></li>
-         </ul>
-         -->
 
          <div class="wrapper">
             <div class="container">
@@ -138,57 +109,68 @@
                </div>
                <div class="row 150%">
                   <div class="12u 12u(narrower)">
-                     <!-- Sidebar -->
-                     <section id="sidebar">
+                     <article id="content">
                         <section>
                            <header>
-                              <h3>Network Info</h3>
+                              <h3 id="network_info">Network Info</h3>
                            </header>
-                           <p>Text about this network</p>
-                           <ul class="actions">
-                              <li><a href="#" class="button">Magna amet nullam</a></li>
-                           </ul>
                         </section>
                         <section>
                            <header>
-                              <h3>Network Stats</h3>
+                              <h4>Background Information</h4>
                            </header>
-                           <p>Loss function, etc</p>
-                           <ul class="actions">
-                              <li><a href="#" class="button">Ipsum sed dolor</a></li>
-                           </ul>
+                           <p>This technique requires data from a network during its test run: data is pumped into the network and each neuron's post-synaptic activation value is recorded. This data is then used as a multi-dimensional feature to be reduced with the <a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding">t-SNE algorithm</a>. We embed this high dimensional space down to one dimension for plotting purposes with the idea that neurons that co-activate are embedded closely. In keeping with more traditional connected graph layouts that represent a neural network, we render inputs on the left, the hidden layers vertically in the middle, and the output layer on the end. Co-activation between layers are rendered by strengthening the link between nodes of different layers (through opacity and size), while within a layer the nodes are left to be proximal.</p>
                         </section>
-                     </section>
+                     </article>
                   </div>
                </div>
-               <p>The fully automatic layout is convenient for rapid visualization—positioning nodes manually is tedious! However, the algorithm is not perfect; links are drawn with partial transparency to highlight crossings. To improve readability and further disambiguate links, this example also lets you reposition nodes interactively. The algorithm could be improved in the future, say to minimize link crossing or to support loopback in cyclical networks.</p>
 
-               <footer>
-                  <p>Data Visualization CSE 512, Spring 2015</p>
-               </footer>
+               <div class="row 150%">
+                  <div class="12u 12u(narrower)">
+                     <article id="svgdataurl">
+                     </article>
+                  </div>
+                  </div>
+               </div>
+               <div class="row 150%">
+                  <div class="12u 12u(narrower)">
+                     <footer>
+                        <p>Data Visualization CSE 512, Spring 2015</p>
+                     </footer>
+                  </div>
+               </div>
+            </div>
          </div>
 
          <script>
-            var filename_arr=[], title_arr=[];
+            var filename_arr=[], title_arr=[], text_block=[];
 
             filename_arr.push("data/xor_sankey.json"); // 0
             title_arr.push("Trained XOR Network");
+            text_block.push("We trained a neural network with two fully connected layers of 16 neurons each on a 3-input XOR problem. XOR is a classic example for neural networks: as the inputs are not linearly separable (without data transformation), a non-linear neural network can learn how to predict the output of the XOR function. In this example, we can see groupings form in the middle columns; these are the network's hidden layers.");
+
             filename_arr.push("data/xor_notrain_sankey.json"); // 1
             title_arr.push("Untrained XOR Network");
+            text_block.push("In this untrained XOR neural network, the groupings within and between layers are less distinct. As the network is untrained, the neuron activations are random, leading to no co-activating behavior, and thus no groupings in the visualization.");
             filename_arr.push("data/xor_smaller_sankey.json"); // 2
             title_arr.push("Minimized Xor Network");
+            text_block.push("\"Neurons that fire together wire together\" -- this phrase describes how biological neural networks make connections. Taking the larger trained XOR network, we reduce the number of neurons based on the groupings we see with this visualization to create 6 neuron layer and 5 neuron layer network. Numerically, these two networks feature similar behavior (same order of magnitude loss function), but the smaller network features less than half of the original network's neurons.");
 
             filename_arr.push("data/mnist_sankey_v2.json"); // 3
             title_arr.push("MNIST Network");
+            text_block.push("The Mixed National Institute of Standards and Technology (MNIST) database is a standard dataset used to benchmark machine learning techniques by recognizing handwritten numbers. For neural networks the input is a 24x24 binary image (which we condense into one spot in the visualization) with a softmax output predicting which class (of 10 possible) the image fits. We use a 64-, 32-, 32-neuron 3-layer network. To make the image less busy and increase performance, we threshold the amount of links between layers to show only the strongest connections. Future work of this visualization technique includes highlighting the strongest groupings and connections for specific inputs: this would reveal structure of the network with respect to input features such as horizontal or vertical lines in the MNIST inputs.");
             //filename_arr.push("data/mnist_sankey_v2.json");
             //title_arr.push("MNIST Network");
             filename_arr.push("data/mnist_sankey.json"); //4
             title_arr.push("MNIST Convolutional Network???");
+            text_block.push("none...");
 
             filename_arr.push("data/humanoid.json"); // 5
-            title_arr.push("Humanoid Robot Control Network");
+            title_arr.push("Walker Robot Control Network");
+            text_block.push("Neural Networks are also used for complex control algorithms. Recent work has utilized large neural networks to approximate behavior policies for robot control. A network is trained on hundreds of walking examples to generalize the behavior. The visualization represents the policy which is inherently crowded due to it operating on continuous inputs. However, a noticeable trend is the split in the third layer that we suspect is due to the symmetry of walking. The network is 76x250x250x250 4-layer fully connected.");
             filename_arr.push("data/biped_all.json"); // 6
-            title_arr.push("Spider Robot Control Network");
+            title_arr.push("Runner Robot Control Network");
+            text_block.push("Similar to the walking robot's control network, this network represents a robot trained on running data. The split in the third layer is not apparent here, but this technique will be applied to a robot with different morphology. Hopefully, a four legged robot's control policy should exhibit some difference in structure.");
 
             function update_sankey(index) {
                console.log("loading file: "+filename_arr[index]);
@@ -197,6 +179,7 @@
                .await(ready);
 
                $('#network_title').html(title_arr[index]);
+               $('#network_info').html(text_block[index]);
             }
 
             $('#xor').click(function(){ update_sankey(0); return false; });
@@ -240,6 +223,23 @@
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
+
+            /* for generating images
+            d3.select("#save").on("click", function(){
+                  var html = d3.select("svg")
+                  .attr("version", 1.1)
+                  .attr("xmlns", "http://www.w3.org/2000/svg")
+                  .node().parentNode.innerHTML;
+
+                  //console.log(html);
+                  var imgsrc = 'data:image/svg+xml;base64,'+ btoa(unescape(encodeURIComponent(html)));
+                  var img = '<img src="'+imgsrc+'">'; 
+                  d3.select("#svgdataurl").html(img);
+            });
+            */
+
+            // Initialize with the simple xor network
+            update_sankey(2);
 
             function ready(error, data_s) {
                d3.select("svg")
@@ -308,15 +308,17 @@
                .enter().append("path")
                .attr("class", "link")
                .attr("d", path)
-               .style("stroke-width", function(d) { return Math.max(1, l_scale*d.value); })
+               .style("stroke-width", function(d) { return Math.min(3, l_scale*d.value); })
                .sort(function(a, b) { return b.dy - a.dy; })
-               .style("opacity", function(d) { return Math.min(0.5, d.value/l_opcty); });
+               .style("fill", "none")
+               .style("stroke", "black")
+               .style("opacity", function(d) { return Math.max(0.1, d.value/l_opcty); });
 
                link.append("title")
                .text(function(d) {
                   return d.source.name+" → "+d.target.name+"\n"
-                  +format(d.v1)+" → "+format(d.v2)+"\n"
-                  +format(d.value)+"\n"+format(d.dy);
+                  +format(d.v1)+" →  "+format(d.v2)+"\n"
+                  +format(d.value);
                });
 
                var node = svg.append("g").selectAll(".node")
@@ -327,24 +329,6 @@
                   //return "translate(" + d.x + "," + d.y + ")";
                   return "translate(" + d.x + "," + d.dy + ")";
                })
-               /*
-               .call(d3.behavior.drag()
-               .origin(function(d) { return d; })
-               .on("dragstart", function() { this.parentNode.appendChild(this); })
-               .on("drag", dragmove));
-               */
-
-               // rectangular sankey nodes
-               /*
-               node.append("rect")
-               .attr("height", function(d) { return d.dy; })
-               .attr("width", sankey.nodeWidth())
-               .style("fill", function(d) {  })
-               .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
-               .append("title")
-               .text(function(d) { return d.name + "\n" + format(d.value); });
-               */
-
                //////////////////////////////////////////////
                // circular sankey nodes
                // size is weights of neurons; get min and max and scale between
@@ -358,10 +342,7 @@
                //.attr("cy", function (d) { return d.y; })
                .attr("cy", 0) 
                .attr("r", function (d) { 
-                  //console.log("size: "+d.size+" dy: "+d.dy);
-                  //return Math.sqrt(d.size*100);
-                  return mapRange([node_min, node_max], [5, 20], d.size);
-                  //return Math.sqrt(d.dy);
+                  return 10;
                })
                .style("opacity", 0.6)
                .append("title")
@@ -372,40 +353,20 @@
                   + format(d.dy); });
 
                node.append("text")
-               .attr("x", -6)
-               //.attr("y", function(d) { return d.dy; })
+               .attr("x", 8)
                .attr("y", 0)
                .attr("dy", ".35em")
                .attr("text-anchor", "end")
                .attr("transform", null)
-               .text(function(d) { return d.name; })
+               .attr("font-family", "sans-serif")
+               .attr("font-size", "16px")
+               .text(function(d) { if (d.layer == 'softmax' ) { return d.name; }})
                .filter(function(d) { return d.x < width / 2; })
                .attr("x", 6 + sankey.nodeWidth())
                .attr("text-anchor", "start");
-
-               // TODO don't allow drag and drop??
-               /*
-               function dragmove(d) {
-                  d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
-                  //d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.pos[0], d3.event.y)) ) + ")");
-                  sankey.relayout();
-                  link.attr("d", path);
-               }
-               */
-
-               // small multiples below
-               // Nest data by symbol.
-               //console.log("network: "+net.network.length);
-
-               /*
-               var neurons = d3.nest()
-               .key(function(d) { return d.layer; })
-               .key(function(d) { return d.neuron; })
-               .entries(net.network);
-               */
+               
             }
 
          </script>
-
       </body>
    </head>

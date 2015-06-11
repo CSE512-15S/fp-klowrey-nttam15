@@ -40,7 +40,6 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
              if (L.layer_type != "fc" && L.layer_type != "conv") {
                 // Good current layer
                 console.log("Layer "+l+": "+L.layer_type+" this: "+neurons);
-                var name = "L"+l+"N"+n;
                 var next_l = 1;
                 if (l < layers-1) {
                    while (network.layers[l+next_l].layer_type == "fc"
@@ -60,10 +59,8 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
                          console.log("\tto Layer: "+nl+" type: "+Ln.layer_type+" next: "+next);
                       }
                       for (var n2=0; n2<next; n2++) {
-                         //var val = 1.0-Math.sqrt((points[count+neurons+n2]-points[count+n])^2);
                          var val = 1.0-Math.abs(points[count+neurons+n2]-points[count+n]);
-                         //console.log("a: "+points[count+neurons+n2]+" b: "+points[count+n]+" val: "+(points[count+neurons+n2]-points[count+n])^2);
-                         links.push(val)
+                         links.push(val);
                          end++;
                       }
                    }
@@ -71,7 +68,7 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
                 var min = Math.min.apply(null, links.slice(start, end));
                 var max = Math.max.apply(null, links.slice(start, end));
 
-                console.log("BETWEEN layers "+l+" "+neurons+" from: "+start+" :: "+end);
+                console.log("BETWEEN layer "+l+" neur: "+neurons+" from: "+start+" :: "+end);
                 console.log("\told min: "+min+" max: "+max);
                 for (var n=start; n<end; n++) {
                    links[n] = mapRange([min, max], [0, 1], links[n]);
@@ -92,7 +89,8 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
        normalizeByLayers: function(network, data, start, end) {
           var layers = network.layers.length;
           var x = 0;
-          for (var l=start; l<end; l++) {
+          var last = Math.min(end, layers);
+          for (var l=start; l<last; l++) {
              var L = network.layers[l];
              if (L.layer_type != "fc" && L.layer_type != "conv" && L.layer_type != "regression") {
                 var neurons = L.out_depth*L.out_sx*L.out_sy;
@@ -138,10 +136,9 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
                 }
                 //else {
                    for (var n=0; n<neurons; n++) {
-                      var name = "L"+l+"N"+n;
+                      var name = "Class "+n;
                       //console.log(name + " "+points[count+n]+" "+count+" "+n+ " ");
                       data.nodes.push({"name":name,"layer":L.layer_type,"col":layer_count,"value":points[count+n],"num":count+n});
-                      //data.meta.push({"size":Math.abs(network.layers[l].out_act.w[n]),"pos":points[count+n]});
                       data.meta.push({"size":10+n%5,"pos":points[count+n]});
                       var next_l = 1;
                       if (l < layers-1) {
@@ -156,7 +153,7 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
                             console.log("\tto Layer: "+nl+" type: "+Ln.layer_type+" next: "+next);
                          }
                          for (var n2=0; n2<next; n2++) {
-                            if (L.layer_type == "input" && collapse_input > 0) {
+                            if (L.layer_type == "input" ){ //&& collapse_input > 0) {
                                var val = 0.6;
                                data.links.push({"source":count+n,
                                   "target":count+neurons+n2,
@@ -164,12 +161,10 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
                                   "v1":points[count+n],
                                   "v2":points[count+neurons+n2],
                                "idx":idx});
-                               used++;
-                               idx++;
                             }
                             else if (Ln.layer_type == "regression") {
-                               //var val = 1.0-Math.abs(points[count+neurons+n2]-points[count+n]);
-                               var val = links[idx]; //1.0-Math.sqrt((points[count+neurons+n2]-points[count+n])^2);
+                               var val = links[idx];
+                               var val = Math.random();
                                if (val > slim_thresh) {
                                   data.links.push({"source":count+n,
                                      "target":count+neurons+n2,
@@ -179,12 +174,9 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
                                   "idx":idx});
                                   used++;
                                }
-                               idx++;
                             }
                             else {
-                               //var val = 1.0-Math.abs(points[count+neurons+n2]-points[count+n]);
-                               //var val = Math.abs(points[count+neurons+n2]-points[count+n]);
-                               var val = 0.5; //links[idx]; //1.0-Math.sqrt((points[count+neurons+n2]-points[count+n])^2);
+                               var val = links[idx];
                                if (val > slim_thresh) {
                                   data.links.push({"source":count+n,
                                      "target":count+neurons+n2,
@@ -194,8 +186,8 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
                                   "idx":idx});
                                   used++;
                                }
-                               idx++;
                             }
+                            idx++;
                          }
                       }
                    }
@@ -207,7 +199,7 @@ var helperjs = helperjs || { REVISION: 'ALPHA' };
           }
           count += next;
           console.log("\t"+count+" neurons TOTAL");
-          console.log("\t"+idx+" connections TOTAL");
+          console.log("\t"+(idx-1)+" connections TOTAL");
           console.log("\t"+links.length+" normalized links");
           console.log("\t"+used+" connections used");
 

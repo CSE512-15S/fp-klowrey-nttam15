@@ -45,7 +45,7 @@ no_dims = 1
 initial_dims = r
 perplexity = 30
 
-Y = tsne.tsne(l1.T, no_dims, initial_dims, perplexity, 1000)
+Y = tsne.tsne(l1.T, no_dims, initial_dims, perplexity, 500)
 
 no_tsne_inputs = False
 if no_tsne_inputs:
