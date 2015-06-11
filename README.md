@@ -8,7 +8,6 @@ Tam Nguyen -- nttam15
 
 Artificial Neural Networks have traditionally been treated as black boxes, both in their development and in their use. We present a method to discover the internal structure of neural networks by visualizing activation properties of the network with respect to input data: co-activations of multiple neurons. Our method combines statistical analysis techniques with a modified Sankey Diagram to show flow of data through neural networks unlike previous visualizations methods. Implications for this technique beyond behavioral and structural visualization include the optimization of an artificial neural network through parameter reduction and further understanding of their processing.
 
-
 # Training Networks for Data Collection
 
 The only network we can train simply is the XOR network. We run the tsne_xor.js code with nodejs, which usings some functions from helper.js, scripts/tsne.js, and scripts/convnet-min.js, the last two of which are provided by https://github.com/karpathy
@@ -17,8 +16,8 @@ The resulting data files ( written to data/xor--.json ) are then read by the ind
 
 # Paper & Poster
 
-Are located under the final directory
-
+[Paper](https://github.com/CSE512-15S/fp-klowrey-nttam15/raw/gh-pages/final/paper-klowrey-nttam15.pdf)
+[Poster](https://github.com/CSE512-15S/fp-klowrey-nttam15/raw/gh-pages/final/poster-klowrey-nttam15.pdf)
 
 # Work breakdown and Research Process
 
