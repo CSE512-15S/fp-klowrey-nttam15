@@ -21,7 +21,7 @@ The resulting data files ( written to data/xor--.json ) are then read by the ind
 
 # Work breakdown and Research Process
 
-Research for this project began with wanting to understand the inner workings of neural networks from a non-math based perspective. This required previous experience with them, as well as other optimization techniques. tSNE cam up as the best way of visualizing the co-activations of neural networks and was research as the best method. 
+Research for this project began with wanting to understand the inner workings of neural networks from a non-math based perspective. This required experience with them, as well as other optimization techniques. tSNE came up as the best way of visualizing the co-activations of neural networks and was research as the best method as a non-linear embedding technique.
 
 Additionally, we strove to understand what other methods were used previously in visualizing neural networks and they are presented in our paper contribution. We found that this kind of visualization has, to the best of our knowledge, not been attempted before.
 
