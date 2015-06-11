@@ -60,6 +60,7 @@
                <span>CSE 512</span>
                <h1>Neural Network Behavior</h1>
                <h3>Visualizing Neuron Co-activation to Reveal Structure</h3>
+               <h4>Kendall Lowrey, Tam Nguyen</h4>
                <!-- Nav -->
                <nav id="nav">
                   <ul>
@@ -117,9 +118,14 @@
                         </section>
                         <section>
                            <header>
-                              <h4>Background Information</h4>
+                              <h3>Abstract</h3>
                            </header>
-                           <p>This technique requires data from a network during its test run: data is pumped into the network and each neuron's post-synaptic activation value is recorded. This data is then used as a multi-dimensional feature to be reduced with the <a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding">t-SNE algorithm</a>. We embed this high dimensional space down to one dimension for plotting purposes with the idea that neurons that co-activate are embedded closely. In keeping with more traditional connected graph layouts that represent a neural network, we render inputs on the left, the hidden layers vertically in the middle, and the output layer on the end. Co-activation between layers are rendered by strengthening the link between nodes of different layers (through opacity and size), while within a layer the nodes are left to be proximal.</p>
+
+                           <p>Artificial Neural Networks have traditionally been treated as black boxes, both in their development and in their use. We present a method to discover the internal structure of neural networks by visualizing activation properties of the network with respect to input data: co-activations of multiple neurons. Our method combines statistical analysis techniques with a modified Sankey Diagram to show flow of data through neural networks unlike previous visualizations methods. Implications for this technique beyond behavioral and structural visualization include the optimization of an artificial neural network through parameter reduction and further understanding of their processing.</p>
+                           <p>
+                              <a id="paper" href="https://github.com/CSE512-15S/fp-klowrey-nttam15/raw/gh-pages/final/paper-klowrey-nttam15.pdf">PAPER</a>
+                              <a id="paper" href="https://github.com/CSE512-15S/fp-klowrey-nttam15/raw/gh-pages/final/poster-klowrey-nttam15.pdf">POSTER</a>
+                           </p>
                         </section>
                      </article>
                   </div>
