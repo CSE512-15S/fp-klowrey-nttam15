@@ -126,6 +126,11 @@
                               <a id="paper" href="https://github.com/CSE512-15S/fp-klowrey-nttam15/raw/gh-pages/final/paper-klowrey-nttam15.pdf">PAPER</a>
                               <a id="paper" href="https://github.com/CSE512-15S/fp-klowrey-nttam15/raw/gh-pages/final/poster-klowrey-nttam15.pdf">POSTER</a>
                            </p>
+                              <h3 id="run_code">Run the Code</h3>
+                           <p>
+                              While our visualization method runs in the browser, it depends on proper data collection. scripts/sankey.js does most of the heavily lifting of actual rendering, depeding on json data representing the nodes and links, along with some meta data.</p>
+                           <p>The easiest way to generate this data is to run "nodejs tsne_xor.js". This script generates three neural networks (the XOR networks above), trians them, collects the activation data, processes it with tSNE, and generates the data structure needed by the rendering script in the browser. Other network data required external software support; the collected activation data has been included in the repository, but the neural network software was not.
+                           </p>
                         </section>
                      </article>
                   </div>
