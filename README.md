@@ -4,7 +4,7 @@ Kendall Lowrey -- klowrey
 
 Tam Nguyen -- nttam15
 
-![alt tag](https://github.com/CSE512-15S/fp-klowrey-nttam15/blob/master/xor_small.png)
+![alt tag](https://github.com/CSE512-15S/fp-klowrey-nttam15/blob/master/summary.png)
 
 Artificial Neural Networks have traditionally been treated as black boxes, both in their development and in their use. We present a method to discover the internal structure of neural networks by visualizing activation properties of the network with respect to input data: co-activations of multiple neurons. Our method combines statistical analysis techniques with a modified Sankey Diagram to show flow of data through neural networks unlike previous visualizations methods. Implications for this technique beyond behavioral and structural visualization include the optimization of an artificial neural network through parameter reduction and further understanding of their processing.
 
